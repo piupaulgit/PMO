@@ -6,4 +6,7 @@ body {
   background-color: $body__bg--color;
   color:$body__text--color;
   font-family: 'Roboto', sans-serif;
+  img{
+    max-width: 100%;
+  }
 }
