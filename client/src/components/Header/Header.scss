@@ -1,0 +1,39 @@
+@import '../../assets/styles/variables/variables';
+.header{
+    box-shadow: 2px 4px 10px -8px #dcdce9;
+    .profile-dropdown{
+        .dropdown-menu {
+            border: 0;
+            border-radius: 7px;
+            box-shadow: -5px -1px 31px -11px #dcdce9;
+            .nav-item{
+                .nav-link{
+                    padding: 6px 16px;
+                    font-size: 14px;
+                    &:hover{
+                        background-color: $body__bg--color;
+                    }
+                }
+            }
+        }
+        font-size: 14px;
+        a{
+            padding: 0;
+            color: $body__text--color;
+            &:after{
+                display: none;
+            }
+            .bi-chevron-down{
+                width:8px;
+                margin-left: 8px;
+            }
+        }
+        .thumbnail-image{
+            width:30px;
+            height:30px;
+            border-radius: 50%;
+            border: 2px solid #dcdce9;
+            margin-right: 6px;
+        }
+    }
+}

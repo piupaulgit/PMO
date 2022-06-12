@@ -1,7 +1,12 @@
-import React from "react";
+import React from 'react';
+import Header from '../../components/Header/Header';
 
 const Projects: React.FC = () => {
-    return <div>Projects</div>;
+    return (
+        <div className='projects'>
+            <Header pageTitle='Projects'></Header>
+        </div>
+    );
 };
 
 export default Projects;

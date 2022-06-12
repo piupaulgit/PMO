@@ -14,7 +14,7 @@ const Sidenav: React.FC = () => {
     console.log(location.pathname, "path");
     return (
         <div className="sidenav text-white bg-dark">
-            <div className="navbar-brand-box">
+            <div className="navbar-brand-box p-3">
                 <img src={logo} alt="sidenav logo" />
             </div>
             <div className="sidebar-menu">

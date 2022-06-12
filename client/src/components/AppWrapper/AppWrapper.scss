@@ -1,0 +1,5 @@
+@import '../../assets/styles/variables/variables';
+
+.main{
+    width: calc(100% - #{$sidenav--width});
+}
