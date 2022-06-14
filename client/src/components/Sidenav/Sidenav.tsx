@@ -6,6 +6,7 @@ import {
     FileEarmarkMedical,
     HouseDoor,
     PersonBoundingBox,
+    PlusCircle,
 } from 'react-bootstrap-icons';
 import { useLocation } from 'react-router-dom';
 
@@ -51,6 +52,17 @@ const Sidenav: React.FC = () => {
                         >
                             <FileEarmarkMedical size={18} />
                             Projects
+                        </Nav.Link>
+                        <Nav.Link
+                            href='/add-user'
+                            className={
+                                location.pathname === '/add-user'
+                                    ? 'active'
+                                    : ''
+                            }
+                        >
+                            <PlusCircle size={18} />
+                            Add User
                         </Nav.Link>
                     </Nav.Item>
                 </Nav>
