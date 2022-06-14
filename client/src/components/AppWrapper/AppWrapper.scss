@@ -1,5 +1,7 @@
 @import '../../assets/styles/variables/variables';
 
 .main{
+    left: $sidenav--width;
     width: calc(100% - #{$sidenav--width});
+    position: relative;
 }

@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
     return (
-        <header className='header bg-white py-3 px-4 d-flex justify-content-between align-items-center'>
+        <header className='header bg-white py-3 px-4 d-flex justify-content-between position-fixed align-items-center'>
             <h6 className='mb-0'>{props.pageTitle}</h6>
             <Nav className='profile-dropdown'>
                 <NavDropdown
