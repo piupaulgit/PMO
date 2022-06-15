@@ -8,7 +8,7 @@ import {
     PersonBoundingBox,
     PlusCircle,
 } from 'react-bootstrap-icons';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidenav: React.FC = () => {
     const location = useLocation();
@@ -23,7 +23,8 @@ const Sidenav: React.FC = () => {
                 <Nav>
                     <Nav.Item>
                         <Nav.Link
-                            href='/dashboard'
+                            as={Link}
+                            to='/dashboard'
                             className={
                                 location.pathname === '/dashboard'
                                     ? 'active'
@@ -34,7 +35,8 @@ const Sidenav: React.FC = () => {
                             Dashboard
                         </Nav.Link>
                         <Nav.Link
-                            href='/clients'
+                            as={Link}
+                            to='/clients'
                             className={
                                 location.pathname === '/clients' ? 'active' : ''
                             }
@@ -43,7 +45,8 @@ const Sidenav: React.FC = () => {
                             Clients
                         </Nav.Link>
                         <Nav.Link
-                            href='/projects'
+                            as={Link}
+                            to='/projects'
                             className={
                                 location.pathname === '/projects'
                                     ? 'active'
@@ -54,7 +57,8 @@ const Sidenav: React.FC = () => {
                             Projects
                         </Nav.Link>
                         <Nav.Link
-                            href='/add-user'
+                            as={Link}
+                            to='/add-user'
                             className={
                                 location.pathname === '/add-user'
                                     ? 'active'
