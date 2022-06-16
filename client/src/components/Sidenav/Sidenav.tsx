@@ -9,10 +9,12 @@ import {
     PlusCircle,
 } from 'react-bootstrap-icons';
 import { Link, useLocation } from 'react-router-dom';
+import { IMenuItems, menuItems } from '../../contants/menuItems';
+import * as Icons from 'react-bootstrap-icons';
 
 const Sidenav: React.FC = () => {
     const location = useLocation();
-    console.log(location.pathname, 'path');
+
     return (
         <div className='sidenav text-white bg-dark position-fixed'>
             <div className='navbar-brand-box p-3'>
@@ -21,54 +23,25 @@ const Sidenav: React.FC = () => {
             <div className='sidebar-menu'>
                 <h5 className='menu-title'>menu</h5>
                 <Nav>
-                    <Nav.Item>
-                        <Nav.Link
-                            as={Link}
-                            to='/dashboard'
-                            className={
-                                location.pathname === '/dashboard'
-                                    ? 'active'
-                                    : ''
-                            }
-                        >
-                            <HouseDoor size={18} />
-                            Dashboard
-                        </Nav.Link>
-                        <Nav.Link
-                            as={Link}
-                            to='/clients'
-                            className={
-                                location.pathname === '/clients' ? 'active' : ''
-                            }
-                        >
-                            <PersonBoundingBox size={18} />
-                            Clients
-                        </Nav.Link>
-                        <Nav.Link
-                            as={Link}
-                            to='/projects'
-                            className={
-                                location.pathname === '/projects'
-                                    ? 'active'
-                                    : ''
-                            }
-                        >
-                            <FileEarmarkMedical size={18} />
-                            Projects
-                        </Nav.Link>
-                        <Nav.Link
-                            as={Link}
-                            to='/add-user'
-                            className={
-                                location.pathname === '/add-user'
-                                    ? 'active'
-                                    : ''
-                            }
-                        >
-                            <PlusCircle size={18} />
-                            Add User
-                        </Nav.Link>
-                    </Nav.Item>
+                    {menuItems &&
+                        menuItems.map((menu: IMenuItems, index: number) => {
+                            // const [menu.icon] = Icons;
+                            return (
+                                <Nav.Item key={index}>
+                                    <Nav.Link
+                                        as={Link}
+                                        to={menu.url}
+                                        className={
+                                            location.pathname === menu.url
+                                                ? 'active'
+                                                : ''
+                                        }
+                                    >
+                                        {menu.label}
+                                    </Nav.Link>
+                                </Nav.Item>
+                            );
+                        })}
                 </Nav>
             </div>
         </div>
