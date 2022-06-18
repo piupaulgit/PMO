@@ -25,7 +25,6 @@ const Sidenav: React.FC = () => {
                 <Nav>
                     {menuItems &&
                         menuItems.map((menu: IMenuItems, index: number) => {
-                            // const [menu.icon] = Icons;
                             return (
                                 <Nav.Item key={index}>
                                     <Nav.Link
