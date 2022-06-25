@@ -2,6 +2,7 @@ import React from 'react';
 import { Badge, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import { Calendar } from 'react-bootstrap-icons';
 import Header from '../../../components/Header/Header';
+import TaskList from '../Tasks/TaskList/TaskList';
 
 const ProjectDetail: React.FC = () => {
     return (
@@ -101,6 +102,9 @@ const ProjectDetail: React.FC = () => {
                             </Card.Body>
                         </Card>
                     </Col>
+                </Row>
+                <Row>
+                    <TaskList></TaskList>
                 </Row>
             </Container>
         </div>
