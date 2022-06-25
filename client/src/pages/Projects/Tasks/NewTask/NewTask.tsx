@@ -29,7 +29,7 @@ const NewTask: React.FC = () => {
                                 placeholder='Task Description'
                             />
                         </Form.Group>
-                        <Row>
+                        <Row className='mb-3'>
                             <Col md={6}>
                                 <Form.Group>
                                     <Form.Label>Type</Form.Label>
@@ -51,6 +51,10 @@ const NewTask: React.FC = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
+                        <Form.Group>
+                            <Form.Label>Attach File</Form.Label>
+                            <Form.Control type='file'></Form.Control>
+                        </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
