@@ -1,7 +1,12 @@
-import React from "react";
+import React from 'react';
+import Header from '../../components/Header/Header';
 
-function Dashboard() {
-  return <div>Dashboard</div>;
-}
+const Dashboard: React.FC = () => {
+    return (
+        <div className='dashboard'>
+            <Header pageTitle='Dashboard'></Header>
+        </div>
+    );
+};
 
 export default Dashboard;
