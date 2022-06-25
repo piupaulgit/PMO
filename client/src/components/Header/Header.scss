@@ -1,0 +1,6 @@
+@import '../../assets/styles/variables/variables';
+.header{
+    box-shadow: 2px 4px 10px -8px #dcdce9;
+    z-index: 2;
+    width: calc(100% - #{$sidenav--width});
+}

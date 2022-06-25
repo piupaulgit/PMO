@@ -1,14 +1,15 @@
 @import '~bootstrap/scss/bootstrap';
 @import './assets/styles/variables/variables';
+@import './assets/styles/common';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400&display=swap');
 body {
     margin: 0;
     background-color: $body__bg--color;
     color: $body__text--color;
     font-family: 'Roboto', sans-serif;
-}
-img {
-    max-width: 100%;
+    img {
+        max-width: 100%;
+    }
 }
 .card {
     box-shadow: 0 0.75rem 1.5rem rgba(5, 38, 63, 0.05);

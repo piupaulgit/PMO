@@ -1,0 +1,42 @@
+@import '../../assets/styles/variables/variables';
+
+.sidenav {
+    width: $sidenav--width;
+    height: 100vh;
+    .navbar-brand-box{
+        text-align: center;
+        top: 0;
+        position: fixed;
+        width: $sidenav--width;
+        border-bottom: 1px solid #5c5c5c;
+        img{
+            width: 86px;
+        }
+    }
+    .sidebar-menu{
+        position: relative;
+        top : 60px;
+        padding-top: 40px;
+        .nav{
+            .nav-item{
+                width: 100%;
+                .nav-link{
+                    font-size: 14px;
+                    padding: 10px 20px;
+                    color: $white--color;
+                    svg{
+                        margin-right: 10px;
+                    }
+                    &:hover, &.active{
+                        background: darken($color: $body__text--color , $amount:30%);
+                    }
+                }
+            }
+        }
+        .menu-title{
+            font-size: 11px;
+            padding: 0 20px;
+            text-transform: uppercase;
+        }
+    }
+}
