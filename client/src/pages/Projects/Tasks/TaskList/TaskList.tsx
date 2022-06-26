@@ -16,19 +16,20 @@ import {
     Trash2,
 } from 'react-bootstrap-icons';
 import NewTask from '../NewTask/NewTask';
+import TaskDetail from '../TaskDetail/TaskDetail';
 
-enum ITaskStatus {
+export enum ITaskStatus {
     new = 'new',
     inProgress = 'inProgress',
     done = 'done',
     rejected = 'rejected',
     closed = 'closed',
 }
-enum ITaskType {
+export enum ITaskType {
     task = 'task',
     bug = 'bug',
 }
-interface ITask {
+export interface ITask {
     title: string;
     description: string;
     type: ITaskType;
@@ -41,7 +42,8 @@ interface ITask {
 const tasksSample: ITask[] = [
     {
         title: 'Header name not matching',
-        description: 'header name not matching after reload',
+        description:
+            '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
         type: ITaskType.bug,
         assignedBy: 'Deep',
         assignedTo: 'Piu',
@@ -50,8 +52,8 @@ const tasksSample: ITask[] = [
         dueDate: new Date(),
     },
     {
-        title: 'Header name not matching',
-        description: 'header name not matching after reload',
+        title: 'logo not loading',
+        description: 'logo not loading after reload',
         type: ITaskType.task,
         assignedBy: 'Deep',
         assignedTo: 'Piu',
@@ -62,6 +64,16 @@ const tasksSample: ITask[] = [
 ];
 
 const TaskList: React.FC = () => {
+    const [currentTask, setCurrentTask] = useState<ITask>(Object);
+    const showTaskDetail = (task: ITask) => {
+        setCurrentTask(task);
+        setEnableDetail(true);
+    };
+    const [enableDetail, setEnableDetail] = useState<boolean>(false);
+
+    const hideShowModal = (val: boolean) => {
+        setEnableDetail(val);
+    };
     return (
         <div className='task-list mt-4'>
             <div className='d-flex justify-content-between'>
@@ -84,7 +96,11 @@ const TaskList: React.FC = () => {
                     {tasksSample &&
                         tasksSample.map((task: ITask, index: number) => {
                             return (
-                                <tr key={index}>
+                                <tr
+                                    key={index}
+                                    onClick={() => showTaskDetail(task)}
+                                    style={{ cursor: 'pointer' }}
+                                >
                                     <td>{index}</td>
                                     <td>
                                         {task.type === ITaskType.bug ? (
@@ -120,6 +136,11 @@ const TaskList: React.FC = () => {
                         })}
                 </tbody>
             </Table>
+            <TaskDetail
+                taskDetail={currentTask}
+                showDetail={enableDetail}
+                parentCallback={hideShowModal}
+            ></TaskDetail>
         </div>
     );
 };
