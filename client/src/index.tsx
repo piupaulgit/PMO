@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import Routers from './Routers';
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -10,6 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Routers />
+    <ToastContainer 
+      position="bottom-center"
+      autoClose={2000}
+      hideProgressBar={true}
+      theme={'dark'} />
   </React.StrictMode>
 );
 
