@@ -2,10 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const userRoutes = require('./routes/user')
+const projectRoutes = require('./routes/projectRoutes')
 
 const dbUrl = "mongodb://localhost/pmo"
 app.use(express.json())
 app.use('/api/auth', userRoutes)
+app.use('/api/project', projectRoutes)
+
 
 mongoose.connect(dbUrl, {useNewUrlParser: true, useUnifiedTopology: true})
 const db = mongoose.connection
