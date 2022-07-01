@@ -3,7 +3,11 @@ const bcrypt = require('bcrypt')
 const Constants = require('../constants/constant')
 const jwt = require('jsonwebtoken')
 const tokenSecret = 'my-token-secret'
-const rounds = 10
+const saltRounds = 10
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+
 
 exports.logIn = (req, res) => {
         User.findOne({email: req.body.email})
@@ -28,7 +32,7 @@ exports.logIn = (req, res) => {
 }
 
 exports.signIn = (req, res) => {
-    bcrypt.hash(req.body.password, rounds, (error, hash) => {
+    bcrypt.hash(req.body.password, saltRounds, (error, hash) => {
         if (error) {
             res.status(500).json(error)            
         } else {
@@ -52,6 +56,76 @@ exports.signIn = (req, res) => {
 
 }
 
+exports.setPassword = (req, res) => {
+    const query = {
+        'email': req.body.email
+    }
+    const hash = bcrypt.hashSync(req.body.password, saltRounds);
+    const update = {
+        'password': hash
+    }
+    User.findOneAndUpdate(query, update, {upsert: false}, (error, doc) => {
+        if (error) {
+            res.status(500).json(error)
+        } 
+        if (!doc) {
+            res.status(500).json({error: 'No record found'})
+        } else {
+            res.status(200).json({data: doc})
+        }
+    })
+}
+
+exports.approve = (req, res) => {
+    if (!req.body.approve) {
+        res.status(200).json({message: 'User not approve'})
+    } else {
+
+        // var transporter = nodemailer.createTransport({
+        //     host: "smtp.gmail.com",
+        //     port: 465,
+        //     secure: true,
+        //     auth: {
+        //       type: "OAuth2",
+        //       user: "user@example.com",
+        //       accessToken: "ya29.Xx_XX0xxxxx-xX0X0XxXXxXxXXXxX0x",
+        //     },
+
+
+        //   service: 'gmail',
+        //   auth: {
+        //     user: 'deepkarmakar61@gmail.com',
+        //     pass: 'Kolkata#000'
+        //   }
+        // });
+        let transport = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+              user: process.env.EMAIL_USERNAME,
+              pass: process.env.EMAIL_PASSWORD
+            }
+         });
+        
+        var mailOptions = {
+          from: 'deepkarmakar61@gmail.com',
+          to: req.body.email,
+          subject: 'Happy 7 month Anniversary SooooooNaaaaai',
+          text: 'Nacho nacho, long way to goooooooooo :)'
+        };
+        
+        transport.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log('nooo');
+            console.log(error);
+        } else {
+              console.log('yes');
+            console.log('Email sent: ' + info.response);
+          }
+        });
+    }
+}
 
 function generateToken(user){
     return jwt.sign({data: user}, tokenSecret, {expiresIn: '24h'})
