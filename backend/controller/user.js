@@ -13,7 +13,7 @@ exports.logIn = (req, res) => {
     User.findOne({ email: req.body.email })
         .then(user => {
             if (!user) {
-                res.status(404).json({ error: 'no user with that email' })
+                res.status(404).json({ error: 'no user with this email' })
             } else {
                 bcrypt.compare(req.body.password, user.password, (error, match) => {
                     if (error) {
@@ -77,64 +77,77 @@ exports.setPassword = (req, res) => {
 }
 
 exports.approve = (req, res) => {
-    let transport = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: process.env.EMAIL_PORT,
-        secure: false,
-        auth: {
-            user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
-
-    const getSubject = () => {
-        return `PMO | ${req.body.approve ? 'Approved' : 'Not Approved'}`;
-    }
-
-    const getText = () => {
-        let text;
-        if (!req.body.approve) {
-            text = `This is to inform you that your request has not been approved by admin. Please contact with <a href="mailto:${Constants.CONTACT_SUPPORT_EMAIL}">${Constants.CONTACT_SUPPORT_EMAIL}</a>`;
-        } else {
-            text = `This is to inform you that your request has been approved.\nPlease <a href="${Constants.HOST_URL}?email=${req.body.email}">set your password</a> to continue with PMO.`
-        }
-        return text;
-    }
-    var mailOptions = {
-        from: process.env.EMAIL_USERNAME,
-        to: req.body.email,
-        subject: getSubject(),
-        html: getText()
-    };
-
-
-    transport.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log('email error');
-            res.status(500).json({ message: 'Email not sent' })
-        } else {
-            console.log('email success');
-            res.status(200).json({ message: 'Email sent succesfully' })
-
-            // update new user status 
-            const query = {
-                'email': req.body.email
+    const approveProcess = () => {
+        let transport = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: process.env.EMAIL_PORT,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USERNAME,
+                pass: process.env.EMAIL_PASSWORD
             }
-            const update = {
-                'status': req.body.approve ? Constants.APPROVED : Constants.NOT_APPROVED
-            }
-            User.findOneAndUpdate(query, update, { upsert: false }, (error, doc) => {
-                if (error) {
-                    console.log('User status update fail');
-                }
-                if (!doc) {
-                    console.log('User status update - No record found');
-                } else {
-                    console.log('User status updated');
-                }
-            })
+        });
+
+        const getSubject = () => {
+            return `PMO | ${req.body.approve ? 'Approved' : 'Not Approved'}`;
         }
-    });
+
+        const getText = () => {
+            let text;
+            if (!req.body.approve) {
+                text = `This is to inform you that your request has not been approved by admin. Please contact with <a href="mailto:${Constants.CONTACT_SUPPORT_EMAIL}">${Constants.CONTACT_SUPPORT_EMAIL}</a>`;
+            } else {
+                text = `This is to inform you that your request has been approved.\nPlease <a href="${Constants.HOST_URL}?email=${req.body.email}">set your password</a> to continue with PMO.`
+            }
+            return text;
+        }
+        var mailOptions = {
+            from: process.env.EMAIL_USERNAME,
+            to: req.body.email,
+            subject: getSubject(),
+            html: getText()
+        };
+
+
+        transport.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log('email error');
+                res.status(500).json({ message: 'Email not sent' })
+            } else {
+                console.log('email success');
+                res.status(200).json({ message: 'Email sent succesfully' })
+
+                // update new user status 
+                const query = {
+                    'email': req.body.email
+                }
+                const update = {
+                    'status': req.body.approve ? Constants.APPROVED : Constants.NOT_APPROVED
+                }
+                User.findOneAndUpdate(query, update, { upsert: false }, (error, doc) => {
+                    if (error) {
+                        console.log('User status update fail');
+                    }
+                    if (!doc) {
+                        console.log('User status update - No record found');
+                    } else {
+                        console.log('User status updated');
+                    }
+                })
+            }
+        });
+    }
+    User.findOne({ email: req.body.email })
+        .then(user => {
+            if (!user) {
+                res.status(404).json({ error: 'no user with this email' })
+            } else {
+                approveProcess();
+            }
+        })
+        .catch(error => {
+            res.status(500).json(error)
+        })
 }
 
 function generateToken(user) {
