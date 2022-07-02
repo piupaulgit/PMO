@@ -6,22 +6,23 @@ const tokenSecret = 'my-token-secret'
 const saltRounds = 10
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const { responseMessages } = require('../utilities/responseMessage');
 
 
-
+// Login Method
 exports.logIn = (req, res) => {
     User.findOne({ email: req.body.email })
         .then(user => {
             if (!user) {
-                res.status(404).json({ error: 'no user with this email' })
+                responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
             } else {
                 bcrypt.compare(req.body.password, user.password, (error, match) => {
                     if (error) {
-                        res.status(500).json(error)
+                        responseMessages(res, 500, false, Constants.RESPONSE.ERROR_OCCURRED);
                     } else if (match) {
-                        res.status(200).json({ token: generateToken(user) })
+                        responseMessages(res, 200, true, Constants.RESPONSE.LOGIN_SUCCESS, [{ token: generateToken(user) }]);
                     } else {
-                        res.status(403).json({ error: 'Password do not match' })
+                        responseMessages(res, 500, false, Constants.RESPONSE.PASSWORD_NOT_MATCHED);
                     }
                 })
             }
@@ -31,6 +32,7 @@ exports.logIn = (req, res) => {
         })
 }
 
+// Sign-in/register method
 exports.signIn = (req, res) => {
     bcrypt.hash(req.body.password, saltRounds, (error, hash) => {
         if (error) {
@@ -56,6 +58,7 @@ exports.signIn = (req, res) => {
 
 }
 
+// Set Password (After admin approve user/change password by user)
 exports.setPassword = (req, res) => {
     const query = {
         'email': req.body.email
@@ -69,14 +72,32 @@ exports.setPassword = (req, res) => {
             res.status(500).json(error)
         }
         if (!doc) {
-            res.status(500).json({ error: 'No record found' })
+            responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
         } else {
-            res.status(200).json({ data: doc })
+            responseMessages(res, 500, false, Constants.RESPONSE.PASSWORD_SET_SUCCESS);
         }
     })
 }
 
-exports.approve = (req, res) => {
+// Check if user is exist - it will return true/false
+// 'query' eg: { email: req.body.email }
+const isUserExist = async (query) => {
+    await User.findOne(query)
+        .then(user => {
+            if (!user) {
+                return false;
+            } else {
+                return true;
+            }
+        })
+        .catch(error => {
+            console.log('Find user error');
+        })
+}
+
+// Admin approves user from dashboard
+exports.approve = async (req, res) => {
+    // Email Functionality
     const approveProcess = () => {
         let transport = nodemailer.createTransport({
             host: 'smtp.gmail.com',
@@ -137,19 +158,16 @@ exports.approve = (req, res) => {
             }
         });
     }
-    User.findOne({ email: req.body.email })
-        .then(user => {
-            if (!user) {
-                res.status(404).json({ error: 'no user with this email' })
-            } else {
-                approveProcess();
-            }
-        })
-        .catch(error => {
-            res.status(500).json(error)
-        })
+    
+    // Check if user is exist or not
+    if (await isUserExist({ email: req.body.email })) {
+        approveProcess();
+    } else {
+        responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
+    }
 }
 
+// Token generate function
 function generateToken(user) {
     return jwt.sign({ data: user }, tokenSecret, { expiresIn: '24h' })
 }
