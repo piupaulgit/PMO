@@ -13,7 +13,7 @@ exports.createProject = (req, res) => {
         if (err) {
             responseMessages(res, 400, false, 'Something wrong with the file.');
         }
-        const { title, description, client, budget, startDate, dueDate } =
+        const { title, description, client, budget, startDate, dueDate,status } =
             fields;
         if (
             !title ||
@@ -21,7 +21,8 @@ exports.createProject = (req, res) => {
             !client ||
             !budget ||
             !startDate ||
-            !dueDate
+            !dueDate ||
+            !status
         ) {
             responseMessages(res, 400, false, 'Please fill all the inputs.');
         }

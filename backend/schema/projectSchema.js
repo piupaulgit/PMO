@@ -30,6 +30,10 @@ const projectSchema = mongoose.Schema({
     logo:{
         data: Buffer,
         contentType: String,
+    },
+    status: {
+        type: String,
+        require: true
     }
 },{ timestamps: true })
 
