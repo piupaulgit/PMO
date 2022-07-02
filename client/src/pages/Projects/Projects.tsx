@@ -1,4 +1,5 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import {
     Badge,
     Container,
@@ -9,58 +10,26 @@ import {
 } from 'react-bootstrap';
 import { Pencil, ThreeDots, Trash3 } from 'react-bootstrap-icons';
 import Header from '../../components/Header/Header';
+import { getProjects } from '../../Services/api/projectsApi';
 
 interface IProject {
-    logo: string | null;
-    projectTitle: string;
-    projectDescription: string;
+    logo?: string | null;
+    title: string;
+    client: string;
+    description: string;
+    budget: number;
     dueDate: string;
-    status: string;
-    team: string[];
+    startDate: string;
+    status?: string;
+    team?: string[];
 }
 const Projects: React.FC = () => {
-    const sampleProjectList: IProject[] = [
-        {
-            logo: 'logo',
-            projectTitle: 'New admin Design',
-            projectDescription: 'It will be as simple as Occidental',
-            dueDate: '15 Oct 2019',
-            status: 'in progress',
-            team: ['Deep', 'Piu'],
-        },
-        {
-            logo: 'logo',
-            projectTitle: 'New admin Design',
-            projectDescription: 'It will be as simple as Occidental',
-            dueDate: '15 Oct 2019',
-            status: 'in progress',
-            team: ['Deep', 'Piu'],
-        },
-        {
-            logo: 'logo',
-            projectTitle: 'New admin Design',
-            projectDescription: 'It will be as simple as Occidental',
-            dueDate: '15 Oct 2019',
-            status: 'in progress',
-            team: ['Deep', 'Piu'],
-        },
-        {
-            logo: 'logo',
-            projectTitle: 'New admin Design',
-            projectDescription: 'It will be as simple as Occidental',
-            dueDate: '15 Oct 2019',
-            status: 'in progress',
-            team: ['Deep', 'Piu'],
-        },
-        {
-            logo: 'logo',
-            projectTitle: 'New admin Design',
-            projectDescription: 'It will be as simple as Occidental',
-            dueDate: '15 Oct 2019',
-            status: 'in progress',
-            team: ['Deep', 'Piu'],
-        },
-    ];
+    const [allProjects, setAllProjects] = useState<IProject[]>([]);
+
+    useEffect(() => {
+        getProjects().then((res) => setAllProjects(res));
+    }, []);
+
     return (
         <div className='projects'>
             <Header pageTitle='Projects'></Header>
@@ -77,39 +46,25 @@ const Projects: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sampleProjectList &&
-                            sampleProjectList.map(
+                        {allProjects &&
+                            allProjects.map(
                                 (project: IProject, index: number) => {
                                     return (
                                         <tr key={index}>
                                             <td>{project.logo}</td>
                                             <td>
                                                 <h4 className='fs-6 mb-0'>
-                                                    {project.projectTitle}
+                                                    {project.title}
                                                 </h4>
                                                 <small className='fs-6 text-muted'>
-                                                    {project.projectDescription}
+                                                    {project.description}
                                                 </small>
                                             </td>
                                             <td>{project.dueDate}</td>
                                             <td>
                                                 <Badge>{project.status}</Badge>
                                             </td>
-                                            <td>
-                                                {project &&
-                                                    project.team.map(
-                                                        (
-                                                            member: string,
-                                                            ind: number
-                                                        ) => {
-                                                            return (
-                                                                <span key={ind}>
-                                                                    {member}
-                                                                </span>
-                                                            );
-                                                        }
-                                                    )}
-                                            </td>
+                                            <td>Deep</td>
                                             <td>
                                                 <Nav className='justify-content-center'>
                                                     <NavDropdown
