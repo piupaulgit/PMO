@@ -10,18 +10,18 @@ require('dotenv').config();
 
 
 exports.logIn = (req, res) => {
-        User.findOne({email: req.body.email})
+    User.findOne({ email: req.body.email })
         .then(user => {
-            if(!user) {
-                res.status(404).json({error: 'no user with that email'})
+            if (!user) {
+                res.status(404).json({ error: 'no user with that email' })
             } else {
                 bcrypt.compare(req.body.password, user.password, (error, match) => {
                     if (error) {
                         res.status(500).json(error)
-                    } else if (match){
-                        res.status(200).json({token: generateToken(user)})
+                    } else if (match) {
+                        res.status(200).json({ token: generateToken(user) })
                     } else {
-                        res.status(403).json({error: 'Password do not match'})
+                        res.status(403).json({ error: 'Password do not match' })
                     }
                 })
             }
@@ -34,7 +34,7 @@ exports.logIn = (req, res) => {
 exports.signIn = (req, res) => {
     bcrypt.hash(req.body.password, saltRounds, (error, hash) => {
         if (error) {
-            res.status(500).json(error)            
+            res.status(500).json(error)
         } else {
             const newUser = User({
                 name: req.body.name,
@@ -43,10 +43,10 @@ exports.signIn = (req, res) => {
                 role: req.body.role,
                 status: Constants.NOT_APPROVED
             })
-    
+
             newUser.save()
                 .then(user => {
-                    res.status(200).json({user})
+                    res.status(200).json({ user })
                 })
                 .catch(error => {
                     res.status(500).json(error)
@@ -64,69 +64,79 @@ exports.setPassword = (req, res) => {
     const update = {
         'password': hash
     }
-    User.findOneAndUpdate(query, update, {upsert: false}, (error, doc) => {
+    User.findOneAndUpdate(query, update, { upsert: false }, (error, doc) => {
         if (error) {
             res.status(500).json(error)
-        } 
+        }
         if (!doc) {
-            res.status(500).json({error: 'No record found'})
+            res.status(500).json({ error: 'No record found' })
         } else {
-            res.status(200).json({data: doc})
+            res.status(200).json({ data: doc })
         }
     })
 }
 
 exports.approve = (req, res) => {
-    if (!req.body.approve) {
-        res.status(200).json({message: 'User not approve'})
-    } else {
+    let transport = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: process.env.EMAIL_PORT,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
 
-        // var transporter = nodemailer.createTransport({
-        //     host: "smtp.gmail.com",
-        //     port: 465,
-        //     secure: true,
-        //     auth: {
-        //       type: "OAuth2",
-        //       user: "user@example.com",
-        //       accessToken: "ya29.Xx_XX0xxxxx-xX0X0XxXXxXxXXXxX0x",
-        //     },
-
-
-        //   service: 'gmail',
-        //   auth: {
-        //     user: 'deepkarmakar61@gmail.com',
-        //     pass: 'Kolkata#000'
-        //   }
-        // });
-        let transport = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-              user: process.env.EMAIL_USERNAME,
-              pass: process.env.EMAIL_PASSWORD
-            }
-         });
-        
-        var mailOptions = {
-          from: 'deepkarmakar61@gmail.com',
-          to: req.body.email,
-          subject: 'Happy 7 month Anniversary SooooooNaaaaai',
-          text: 'Nacho nacho, long way to goooooooooo :)'
-        };
-        
-        transport.sendMail(mailOptions, function(error, info){
-          if (error) {
-            console.log('nooo');
-            console.log(error);
-        } else {
-              console.log('yes');
-            console.log('Email sent: ' + info.response);
-          }
-        });
+    const getSubject = () => {
+        return `PMO | ${req.body.approve ? 'Approved' : 'Not Approved'}`;
     }
+
+    const getText = () => {
+        let text;
+        if (!req.body.approve) {
+            text = `This is to inform you that your request has not been approved by admin. Please contact with <a href="mailto:${Constants.CONTACT_SUPPORT_EMAIL}">${Constants.CONTACT_SUPPORT_EMAIL}</a>`;
+        } else {
+            text = `This is to inform you that your request has been approved.\nPlease <a href="${Constants.HOST_URL}?email=${req.body.email}">set your password</a> to continue with PMO.`
+        }
+        return text;
+    }
+    var mailOptions = {
+        from: process.env.EMAIL_USERNAME,
+        to: req.body.email,
+        subject: getSubject(),
+        html: getText()
+    };
+
+
+    transport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('email error');
+            res.status(500).json({ message: 'Email not sent' })
+        } else {
+            console.log('email success');
+            res.status(200).json({ message: 'Email sent succesfully' })
+
+            // update new user status 
+            const query = {
+                'email': req.body.email
+            }
+            const update = {
+                'status': req.body.approve ? Constants.APPROVED : Constants.NOT_APPROVED
+            }
+            User.findOneAndUpdate(query, update, { upsert: false }, (error, doc) => {
+                if (error) {
+                    console.log('User status update fail');
+                }
+                if (!doc) {
+                    console.log('User status update - No record found');
+                } else {
+                    console.log('User status updated');
+                }
+            })
+        }
+    });
 }
 
-function generateToken(user){
-    return jwt.sign({data: user}, tokenSecret, {expiresIn: '24h'})
+function generateToken(user) {
+    return jwt.sign({ data: user }, tokenSecret, { expiresIn: '24h' })
 }
