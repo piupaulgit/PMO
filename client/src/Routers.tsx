@@ -6,7 +6,7 @@ import Clients from './pages/Clients/Clients';
 import Dashboard from './pages/Dashboard/Dashboard';
 import ForgotPassword from './pages/Forgot-Password/ForgotPassword';
 import Login from './pages/Login/Login';
-import AddNewProject from './pages/Projects/AddNewProject/AddNewProject';
+import AddEditProject from './pages/Projects/AddEditProject/AddEditProject';
 import ProjectDetail from './pages/Projects/ProjectDetail/ProjectDetail';
 import Projects from './pages/Projects/Projects';
 import Register from './pages/Register/Register';
@@ -18,8 +18,11 @@ const Routers: React.FC = () => {
             <Routes>
                 <Route path='/login' element={<Login />}></Route>
                 <Route path='/register' element={<Register />}></Route>
-				<Route path="forgot-password" element={<ForgotPassword />}></Route>
-				<Route path="set-password" element={<SetPassword />}></Route>
+                <Route
+                    path='forgot-password'
+                    element={<ForgotPassword />}
+                ></Route>
+                <Route path='set-password' element={<SetPassword />}></Route>
 
                 <Route path='/' element={<AppWrapper />}>
                     <Route path='/dashboard' element={<Dashboard />} />
@@ -28,7 +31,11 @@ const Routers: React.FC = () => {
                     <Route path='/add-user' element={<AddUser />}></Route>
                     <Route
                         path='/add-new-project'
-                        element={<AddNewProject />}
+                        element={<AddEditProject page='add' />}
+                    ></Route>
+                    <Route
+                        path='/edit-project'
+                        element={<AddEditProject page='edit' />}
                     ></Route>
                     <Route
                         path='/project-detail'

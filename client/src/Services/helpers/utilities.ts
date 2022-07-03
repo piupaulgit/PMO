@@ -55,6 +55,9 @@ const Utilities =  {
             return true;
         }
         return false;
+    },
+    getFormatedDate:(date: string) => {
+        return new Date(date).toLocaleDateString()
     }
 }
 

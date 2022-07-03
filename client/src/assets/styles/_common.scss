@@ -58,3 +58,26 @@
 p,strong{
     font-size: 13px;
 }
+.rounded-pill{
+    font-size: 10px;
+    line-height: 16px;
+    padding: 4px 17px;
+}
+.spinner-holder{
+    min-height: 100vh;
+    background-color: rgba(255, 255, 255, .6);
+    display: flex;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 99;
+}
+.small-font{
+    font-size: 12px;
+    line-height: 10px;
+}
