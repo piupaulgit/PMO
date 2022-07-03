@@ -1,0 +1,1 @@
+export const projectStatus = ["new", "in progress", 'done', 'closed', 'on hold']

@@ -13,7 +13,7 @@ exports.createProject = (req, res) => {
         if (err) {
             responseMessages(res, 400, false, 'Something wrong with the file.');
         }
-        const { title, description, client, budget, startDate, dueDate,status } =
+        const { title, description, client, budget, startDate, dueDate } =
             fields;
         if (
             !title ||
@@ -21,15 +21,15 @@ exports.createProject = (req, res) => {
             !client ||
             !budget ||
             !startDate ||
-            !dueDate ||
-            !status
+            !dueDate 
         ) {
             responseMessages(res, 400, false, 'Please fill all the inputs.');
         }
         let project = new projectSchema(fields);
-
+        project.status = 'new'
         // handle file
         if (file.logo) {
+            project.isLogoUploaded = true
             if (file.logo.size > 3000000) {
                 responseMessages(res, 400, false, 'File Size is too big');
             }
@@ -43,7 +43,7 @@ exports.createProject = (req, res) => {
             }
             responseMessages(
                 res,
-                400,
+                200,
                 true,
                 'Project added successfully.',
                 project
@@ -75,8 +75,19 @@ exports.getAllProject = (req, res) => {
 };
 
 exports.getSingleProject = (req, res) => {
+    req.project.logo = undefined;
     responseMessages(res, 200, true, "Single project fetched successfully.", req.project);
 };
+
+exports.logo = (req, res, next) => {
+    if (req.project.logo.data) {
+      res.set("content-Type", req.project.logo.contentType);
+      res.send(req.project.logo.data)
+    }else{
+        responseMessages(res, 400, false, 'Image not found')
+    }
+    next();
+  };
 
 exports.updateProject = (req, res) => {
     let form = new formidable.IncomingForm();

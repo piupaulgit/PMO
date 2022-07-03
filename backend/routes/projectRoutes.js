@@ -1,5 +1,5 @@
 const express = require('express');
-const { createProject, getSingleProject, getAllProject, deleteProject, updateProject, getProjectById } = require('../controller/projectController');
+const { createProject, getSingleProject, getAllProject, deleteProject, updateProject, getProjectById, logo } = require('../controller/projectController');
 const router = express.Router()
 
 router.param("projectId", getProjectById);
@@ -9,5 +9,6 @@ router.get('/all', getAllProject)
 router.get('/:projectId', getSingleProject)
 router.delete('/:projectId', deleteProject)
 router.put('/:projectId', updateProject)
+router.get("/logo/:projectId", logo);
 
 module.exports = router;
