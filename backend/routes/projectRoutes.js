@@ -1,5 +1,5 @@
 const express = require('express');
-const { createProject, getSingleProject, getAllProject, deleteProject, updateProject, getProjectById } = require('../controller/projectController');
+const { createProject, getSingleProject, getAllProject, deleteProject, updateProject, getProjectById, logo } = require('../controller/projectController');
 const { authenticateJWT } = require('../utilities/responseMessage');
 const router = express.Router()
 
