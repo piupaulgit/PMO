@@ -27,13 +27,17 @@ const projectSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    logo:{
-        data: Buffer,
-        contentType: String,
-    },
     status: {
         type: String,
         require: true
+    },
+    isLogoUploaded : {
+        type: Boolean,
+        default: false
+    },
+    logo:{
+        data: Buffer,
+        contentType: String,
     }
 },{ timestamps: true })
 

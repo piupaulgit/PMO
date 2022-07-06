@@ -64,6 +64,9 @@ const Utilities =  {
     },
     isValidUser(){
         return this.getToken() ? true : false;
+    },
+    getFormatedDate:(date: string) => {
+        return new Date(date).toLocaleDateString()
     }
 }
 

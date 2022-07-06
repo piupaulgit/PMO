@@ -7,7 +7,7 @@ import Clients from './pages/Clients/Clients';
 import Dashboard from './pages/Dashboard/Dashboard';
 import ForgotPassword from './pages/Forgot-Password/ForgotPassword';
 import Login from './pages/Login/Login';
-import AddNewProject from './pages/Projects/AddNewProject/AddNewProject';
+import AddEditProject from './pages/Projects/AddEditProject/AddEditProject';
 import ProjectDetail from './pages/Projects/ProjectDetail/ProjectDetail';
 import Projects from './pages/Projects/Projects';
 import Register from './pages/Register/Register';
@@ -61,7 +61,11 @@ const Routers: React.FC = () => {
                     />
                     <Route
                         path='/add-new-project'
-                        element={<PrivateRoute><AddNewProject /></PrivateRoute>}
+                        element={<PrivateRoute><AddEditProject page='add' /></PrivateRoute>}
+                    ></Route>
+                    <Route
+                        path='/edit-project'
+                        element={<PrivateRoute><AddEditProject page='edit' /></PrivateRoute>}
                     ></Route>
                     <Route
                         path='/project-detail'
