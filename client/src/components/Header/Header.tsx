@@ -1,6 +1,8 @@
 import React from 'react';
 import { Nav, NavDropdown } from 'react-bootstrap';
 import { Bell, Gear, Person, Power } from 'react-bootstrap-icons';
+import { useNavigate } from 'react-router-dom';
+import Utilities from '../../Services/helpers/utilities';
 import './Header.scss';
 
 interface HeaderProps {
@@ -8,6 +10,11 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
+    const navigate = useNavigate();
+    const logOut = () => {
+        Utilities.setToken('');
+        navigate('/login');
+    }
     return (
         <header className='header bg-white py-3 px-4 d-flex justify-content-between position-fixed align-items-center'>
             <h6 className='mb-0'>{props.pageTitle}</h6>
@@ -48,7 +55,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                             <Gear className='me-2' /> Settings
                         </Nav.Link>
                         <hr className='m-2' />
-                        <Nav.Link>
+                        <Nav.Link onClick={logOut}>
                             <Power className='text-danger me-2' /> Logout
                         </Nav.Link>
                     </Nav.Item>

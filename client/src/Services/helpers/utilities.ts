@@ -55,6 +55,15 @@ const Utilities =  {
             return true;
         }
         return false;
+    },
+    setToken(token: string){
+        localStorage.setItem('token', token)
+    },
+    getToken(){
+        return localStorage.getItem('token');
+    },
+    isValidUser(){
+        return this.getToken() ? true : false;
     }
 }
 

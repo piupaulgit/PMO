@@ -5,14 +5,16 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import loginRegisterGraphic from '../../assets/images/login-register-graphic.png';
 import logoSMall from '../../assets/images/logo-small.svg';
-import {Link} from "react-router-dom";
+import {Link, useSearchParams, useNavigate} from "react-router-dom";
 import { toast } from 'react-toastify';
 import Utilities from "../../Services/helpers/utilities";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import {setUserPassword} from '../../Services/api/auth';
 
 
 interface ISetPassword {
+    email: string | null,
     password: string,
     confirmPassword: string
 }
@@ -27,6 +29,8 @@ const SetPassword: React.FC = () => {
 
     const [setPassword, setSetPassword] = useState<ISetPassword>(Object);
     const [passwordRule, setPasswordRule] = useState<PasswordRule>(Object);
+    const [emailParams, setEmailParams] = useSearchParams();
+    const navigate = useNavigate();
 
     const passwordRuleColor = (rule: keyof PasswordRule) => {
         if (!setPassword.password) {
@@ -68,15 +72,26 @@ const SetPassword: React.FC = () => {
 
     }
 
-
     const handleSubmit = (event: React.SyntheticEvent) => {
         event.preventDefault();
         if(
             Utilities.isValidatePassword(setPassword.password) &&
             isPasswordMatch(setPassword.password, setPassword.confirmPassword) 
         ){
-            console.log(setPassword)
-            toast.error("Password Set successful!");
+            const payload = {
+                email: setPassword.email,
+                password: setPassword.password
+            }
+            setUserPassword(payload).then(res => {
+                console.log(res);
+                
+                if (res.status) {
+                    toast.success(res.message);
+                    navigate('/login')
+                } else {
+                    toast.error(res.message);
+                }
+            })
         }
     }
 
@@ -87,6 +102,13 @@ const SetPassword: React.FC = () => {
             toast.error("Password didn't match");
         }
     }
+
+    useEffect(() => {
+        // const queryString = window.location.search;
+        // const urlParams = new URLSearchParams(queryString);
+        // const email = urlParams.get('email')
+        setSetPassword({...setPassword, ['email']: emailParams.get("email")});
+    }, [])
     
     return (
         <Container>
@@ -111,6 +133,19 @@ const SetPassword: React.FC = () => {
                                 <img src={logoSMall} alt="logo" width="40" />
                             </div>
                             <Form className="pt-5">
+                                <Form.Group
+                                    className="mb-3"
+                                >
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Email"
+                                        required
+                                        name="email"
+                                        readOnly
+                                        value={setPassword.email || ''}
+                                    />
+                                </Form.Group>  
                                 <Form.Group
                                     className="mb-3"
                                 >

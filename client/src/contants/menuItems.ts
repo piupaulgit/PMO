@@ -19,6 +19,10 @@ export const menuItems: IMenuItems[] =[
         url:'/projects',
         icon: 'HouseDoor'
     },{
+        label:'Users',
+        url:'/users',
+        icon:'PlusCircle'
+    },{
         label:'Add User',
         url:'/add-user',
         icon:'PlusCircle'
