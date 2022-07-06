@@ -2,12 +2,45 @@ const User = require('../schema/user')
 const bcrypt = require('bcrypt')
 const Constants = require('../constants/constant')
 const jwt = require('jsonwebtoken')
-const tokenSecret = 'my-token-secret'
+const tokenSecret = Constants.TOKENSECRET;
 const saltRounds = 10
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const { responseMessages } = require('../utilities/responseMessage');
 
+
+// Check if user is exist - it will return true/false
+// 'query' eg: { email: req.body.email }
+const isUserExist = async (query) => {
+    let isExist;
+    await User.findOne(query)
+        .then(user => {
+            if (!user) {
+                isExist = false;
+            } else {
+                isExist = true;
+            }
+        })
+        .catch(error => {
+            console.log('Find user error');
+        })
+
+    return isExist;
+}
+
+// Update user 
+const updateUser = (query, update) => {
+    User.findOneAndUpdate(query, update, { upsert: false }, (error, doc) => {
+        if (error) {
+            console.log('User status update fail');
+        }
+        if (!doc) {
+            console.log('User status update - No record found');
+        } else {
+            console.log('User status updated');
+        }
+    })
+}
 
 // Login Method
 exports.logIn = (req, res) => {
@@ -20,7 +53,7 @@ exports.logIn = (req, res) => {
                     if (error) {
                         responseMessages(res, 500, false, Constants.RESPONSE.ERROR_OCCURRED);
                     } else if (match) {
-                        responseMessages(res, 200, true, Constants.RESPONSE.LOGIN_SUCCESS, [{ token: generateToken(user) }]);
+                        responseMessages(res, 200, true, Constants.RESPONSE.LOGIN_SUCCESS, { token: generateToken(user) });
                     } else {
                         responseMessages(res, 500, false, Constants.RESPONSE.PASSWORD_NOT_MATCHED);
                     }
@@ -34,28 +67,22 @@ exports.logIn = (req, res) => {
 
 // Sign-in/register method
 exports.signIn = (req, res) => {
-    bcrypt.hash(req.body.password, saltRounds, (error, hash) => {
-        if (error) {
-            res.status(500).json(error)
-        } else {
-            const newUser = User({
-                name: req.body.name,
-                email: req.body.email,
-                password: hash,
-                role: req.body.role,
-                status: Constants.NOT_APPROVED
-            })
-
-            newUser.save()
-                .then(user => {
-                    res.status(200).json({ user })
-                })
-                .catch(error => {
-                    res.status(500).json(error)
-                })
-        }
+    const newUser = User({
+        name: req.body.name,
+        email: req.body.email,
+        role: req.body.role,
+        status: Constants.PENDING,
+        password: null
     })
 
+    newUser.save()
+        .then(() => {
+            responseMessages(res, 200, true, Constants.RESPONSE.REGISTERED_SUCCESS);
+        })
+        .catch(error => {
+            responseMessages(res, 500, false, Constants.RESPONSE.REGISTERED_FAIL, error);
+        })
+       
 }
 
 // Set Password (After admin approve user/change password by user)
@@ -74,25 +101,10 @@ exports.setPassword = (req, res) => {
         if (!doc) {
             responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
         } else {
-            responseMessages(res, 500, false, Constants.RESPONSE.PASSWORD_SET_SUCCESS);
+            responseMessages(res, 200, true, Constants.RESPONSE.PASSWORD_SET_SUCCESS);
+            updateUser(query, { 'status': Constants.REGISTERED })
         }
     })
-}
-
-// Check if user is exist - it will return true/false
-// 'query' eg: { email: req.body.email }
-const isUserExist = async (query) => {
-    await User.findOne(query)
-        .then(user => {
-            if (!user) {
-                return false;
-            } else {
-                return true;
-            }
-        })
-        .catch(error => {
-            console.log('Find user error');
-        })
 }
 
 // Admin approves user from dashboard
@@ -132,11 +144,9 @@ exports.approve = async (req, res) => {
 
         transport.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.log('email error');
-                res.status(500).json({ message: 'Email not sent' })
+                responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
             } else {
-                console.log('email success');
-                res.status(200).json({ message: 'Email sent succesfully' })
+                responseMessages(res, 200, true, Constants.RESPONSE.EMAIL_SENT_SUCCESS);
 
                 // update new user status 
                 const query = {
@@ -145,26 +155,30 @@ exports.approve = async (req, res) => {
                 const update = {
                     'status': req.body.approve ? Constants.APPROVED : Constants.NOT_APPROVED
                 }
-                User.findOneAndUpdate(query, update, { upsert: false }, (error, doc) => {
-                    if (error) {
-                        console.log('User status update fail');
-                    }
-                    if (!doc) {
-                        console.log('User status update - No record found');
-                    } else {
-                        console.log('User status updated');
-                    }
-                })
+                updateUser(query, update)
             }
         });
     }
     
     // Check if user is exist or not
+    // const ifUser = await isUserExist({ email: req.body.email });
     if (await isUserExist({ email: req.body.email })) {
         approveProcess();
     } else {
         responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
     }
+}
+
+// Get All Users
+exports.getAllUsers = (req, res) => {
+
+    User.find(req.body.filter || {}, (err, users) => {
+        if (err) {
+            responseMessages(res, 500, false, Constants.RESPONSE.ERROR_OCCURRED);            
+        } else {
+            responseMessages(res, 200, true, null, users);        
+        }
+    })
 }
 
 // Token generate function
