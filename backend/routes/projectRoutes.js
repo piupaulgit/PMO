@@ -10,6 +10,6 @@ router.get('/all', authenticateJWT, getAllProject)
 router.get('/:projectId', authenticateJWT, getSingleProject)
 router.delete('/:projectId', authenticateJWT, deleteProject)
 router.put('/:projectId', authenticateJWT, updateProject)
-router.get("/logo/:projectId", authenticateJWT, logo);
+router.get("/logo/:projectId", logo);
 
 module.exports = router;
