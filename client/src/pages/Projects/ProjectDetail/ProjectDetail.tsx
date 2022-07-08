@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     Badge,
+    Button,
     Card,
     Col,
     Container,
@@ -9,7 +10,7 @@ import {
     Spinner,
 } from 'react-bootstrap';
 import { Calendar } from 'react-bootstrap-icons';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Header from '../../../components/Header/Header';
 import ImageHelper from '../../../components/ImageHepler/ImageHelper';
 import { IProject, IProjectStatus } from '../../../interfaces/Project';
@@ -42,6 +43,7 @@ const ProjectDetail: React.FC = () => {
     return (
         <div className='project-detail'>
             <Header pageTitle='Project Detail'></Header>
+
             <Container className='p-5 page-content-container'>
                 {pageSpinner.state ? (
                     <span className='spinner-holder'>
@@ -50,6 +52,14 @@ const ProjectDetail: React.FC = () => {
                     </span>
                 ) : (
                     <Row>
+                        <div>
+                            <Link
+                                to={`/edit-project?id=${projectDetail._id}`}
+                                className='btn btn-primary mb-2 float-end'
+                            >
+                                Edit Project
+                            </Link>
+                        </div>
                         <Col sm='7'>
                             <Card className='p-4 border-0 shadow-none'>
                                 <Row>

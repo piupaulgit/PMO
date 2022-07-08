@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     Alert,
     Badge,
+    Button,
     Container,
     Nav,
     NavDropdown,
@@ -61,7 +62,7 @@ const Projects: React.FC = () => {
                         if (item._id === projectId) {
                             deletedProjectIndex = index;
                             setAllProjects(
-                                allProjects.splice(deletedProjectIndex - 1, 1)
+                                allProjects.splice(deletedProjectIndex, 1)
                             );
                         }
                     });
@@ -87,6 +88,12 @@ const Projects: React.FC = () => {
                         {pageSpinner.text}
                     </span>
                 )}
+                <Link
+                    className='btn btn-primary float-end mb-2'
+                    to='/add-new-project'
+                >
+                    Add New Project
+                </Link>
                 {allProjects && allProjects?.length > 0 && !pageSpinner.state && (
                     <Table className='pmo-table align-middle'>
                         <thead>
