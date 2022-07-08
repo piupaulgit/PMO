@@ -8,7 +8,7 @@ import {
     Row,
     Spinner,
 } from 'react-bootstrap';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from '../../../components/Header/Header';
 import ImageHelper from '../../../components/ImageHepler/ImageHelper';
@@ -29,6 +29,7 @@ interface IFieldErrorMessages {
     title: string;
     description: string;
     startDate: string;
+    logo: string;
     dueDate: string;
     budget: string;
 }
@@ -39,25 +40,26 @@ interface IProps {
 
 const AddEditProject: React.FC<IProps> = (props: IProps) => {
     const [projectIdFromUrl, setProjectIdFromUrl] = useSearchParams();
-    const [projectDetail, setProjectDetail] = useState<IProjectDetail>(Object);
+    const [projectDetail, setProjectDetail] = useState<IProjectDetail>({
+        _id: '',
+        logo: '',
+        title: '',
+        client: '',
+        description: '',
+        budget: 0,
+        dueDate: '',
+        startDate: '',
+        isLogoUploaded: false,
+        formData: '',
+    });
     const { formData } = projectDetail;
     const [fieldErrorMessages, setFieldErrorMessages] =
-        useState<IFieldErrorMessages>({
-            client: '',
-            title: '',
-            description: '',
-            startDate: '',
-            dueDate: '',
-            budget: '',
-        });
+        useState<IFieldErrorMessages>(Object);
     const [pageSpinner, setPageSpinner] = useState<ISpinner>({
         state: false,
         text: '',
     });
-
-    useEffect(() => {
-        setProjectDetail({ ...projectDetail, formData: new FormData() });
-    }, []);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const projectId = projectIdFromUrl.get('id') || '';
@@ -65,19 +67,20 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
             setPageSpinner({ state: true, text: 'Loading Project Detail...' });
             getSingleProjectDetailFromDb(projectId)
                 .then((res) =>
-                    setProjectDetail({
-                        ...projectDetail,
+                    setProjectDetail((prev) => ({
+                        ...prev,
                         title: res.data.title,
                         description: res.data.description,
                         client: res.data.client,
-                        logo: '',
+                        logo: 'logo',
                         startDate: res.data.startDate,
                         dueDate: res.data.dueDate,
                         status: res.data.status,
                         _id: res.data._id,
+                        budget: res.data.budget,
                         isLogoUploaded: res.data.isLogoUploaded,
                         formData: new FormData(),
-                    })
+                    }))
                 )
                 .catch((err) => console.log(err))
                 .finally(() => {
@@ -86,6 +89,8 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
         };
         if (props.page === 'edit') {
             singleProjectDetail();
+        } else {
+            setProjectDetail((prev) => ({ ...prev, formData: new FormData() }));
         }
     }, [props.page, projectIdFromUrl]);
 
@@ -94,43 +99,53 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
             name === 'logo' ? event.target.files[0] : event.target.value;
         formData.set(name, value);
         setProjectDetail({ ...projectDetail, [name]: value });
-        if (value === '') {
-            setFieldErrorMessages({
-                ...fieldErrorMessages,
-                [name]: `${name} is required.`,
-            });
-        } else {
-            setFieldErrorMessages({
-                ...fieldErrorMessages,
-                [name]: ``,
-            });
+
+        if (fieldErrorMessages[name as keyof IFieldErrorMessages]) {
+            setFieldErrorMessages({ ...fieldErrorMessages, [name]: '' });
         }
+    };
+
+    const validateForm = () => {
+        const { client, title, description, startDate, dueDate, budget } =
+            projectDetail;
+
+        const newErrors: IFieldErrorMessages = {
+            client: '',
+            title: '',
+            description: '',
+            startDate: '',
+            logo: '',
+            dueDate: '',
+            budget: '',
+        };
+
+        Object.keys(newErrors).map((item: string) => {
+            if (
+                !projectDetail[item as keyof IFieldErrorMessages] &&
+                projectDetail[item as keyof IFieldErrorMessages]?.toString()
+                    .length === 0
+            ) {
+                newErrors[
+                    item as keyof IFieldErrorMessages
+                ] = `Please enter ${item
+                    .replace(/([A-Z])/g, ' $1')
+                    .trim()} of the project`;
+            }
+        });
+
+        return newErrors;
     };
     const addNewProject = (event: any) => {
         event.preventDefault();
-        const isBlank = Object.values(fieldErrorMessages).every(
-            (item) => item === ''
-        );
-        if (!isBlank) {
-            toast.error('Please fill all the required inputs.');
-        } else {
+        const formErrors: IFieldErrorMessages = validateForm();
+        if (Object.values(formErrors).every((x) => x === null || x === '')) {
             setPageSpinner({ state: true, text: 'Saving new project...' });
             addNewProjectInDb(formData)
                 .then((res) => {
                     if (res.status) {
                         toast.success(res.message);
-                        setProjectDetail({
-                            _id: '',
-                            logo: '',
-                            title: '',
-                            client: '',
-                            description: '',
-                            budget: 0,
-                            dueDate: '',
-                            startDate: '',
-                            isLogoUploaded: false,
-                            formData: new FormData(),
-                        });
+                        setEmptyForm();
+                        navigate('/projects');
                     } else {
                         toast.error(res.message);
                     }
@@ -144,34 +159,21 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                         text: '',
                     });
                 });
+        } else {
+            setFieldErrorMessages(formErrors);
         }
     };
 
     const EditProject = (event: any) => {
         event.preventDefault();
-        const isBlank = Object.values(fieldErrorMessages).every(
-            (item) => item === ''
-        );
-        if (!isBlank) {
-            toast.error('Please fill all the required inputs.');
-        } else {
+        const formErrors: IFieldErrorMessages = validateForm();
+        if (Object.values(formErrors).every((x) => x === null || x === '')) {
             setPageSpinner({ state: true, text: 'Saving your project...' });
             editProjectInDb(projectDetail._id, formData)
                 .then((res) => {
                     if (res.status) {
                         toast.success(res.message);
-                        setProjectDetail({
-                            _id: '',
-                            logo: '',
-                            title: '',
-                            client: '',
-                            description: '',
-                            budget: 0,
-                            dueDate: '',
-                            startDate: '',
-                            isLogoUploaded: false,
-                            formData: new FormData(),
-                        });
+                        navigate('/projects');
                     } else {
                         toast.error(res.message);
                     }
@@ -185,7 +187,24 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                         text: '',
                     });
                 });
+        } else {
+            setFieldErrorMessages(formErrors);
         }
+    };
+
+    const setEmptyForm = () => {
+        setProjectDetail({
+            _id: '',
+            logo: '',
+            title: '',
+            client: '',
+            description: '',
+            budget: 0,
+            dueDate: '',
+            startDate: '',
+            isLogoUploaded: false,
+            formData: new FormData(),
+        });
     };
 
     return (
@@ -219,6 +238,9 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                         aria-label='Select Client'
                                         onChange={handleInputChange('client')}
                                         value={projectDetail.client}
+                                        isInvalid={Boolean(
+                                            fieldErrorMessages.client
+                                        )}
                                     >
                                         <option value=''>Select</option>
                                         <option value='Prima Di'>
@@ -226,11 +248,12 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                         </option>
                                         <option value='Himani'>Himani</option>
                                     </Form.Select>
-                                    {fieldErrorMessages.client && (
-                                        <p className='text-danger my-2 text-capitalize'>
-                                            {fieldErrorMessages.client}
-                                        </p>
-                                    )}
+                                    <Form.Control.Feedback
+                                        className='small-font text-uppercase'
+                                        type='invalid'
+                                    >
+                                        {fieldErrorMessages.client}
+                                    </Form.Control.Feedback>
                                 </Col>
                             </Form.Group>
                             <Form.Group as={Row} className='mb-3'>
@@ -243,12 +266,16 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                         placeholder='Project Title'
                                         onChange={handleInputChange('title')}
                                         value={projectDetail.title}
+                                        isInvalid={Boolean(
+                                            fieldErrorMessages.title
+                                        )}
                                     />
-                                    {fieldErrorMessages.title && (
-                                        <p className='text-danger my-2 text-capitalize'>
-                                            {fieldErrorMessages.title}
-                                        </p>
-                                    )}
+                                    <Form.Control.Feedback
+                                        className='small-font text-uppercase'
+                                        type='invalid'
+                                    >
+                                        {fieldErrorMessages.title}
+                                    </Form.Control.Feedback>
                                 </Col>
                             </Form.Group>
                             <Form.Group as={Row} className='mb-3'>
@@ -263,12 +290,16 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                             'description'
                                         )}
                                         value={projectDetail.description}
+                                        isInvalid={Boolean(
+                                            fieldErrorMessages.description
+                                        )}
                                     />
-                                    {fieldErrorMessages.description && (
-                                        <p className='text-danger my-2 text-capitalize'>
-                                            {fieldErrorMessages.description}
-                                        </p>
-                                    )}
+                                    <Form.Control.Feedback
+                                        className='small-font text-uppercase'
+                                        type='invalid'
+                                    >
+                                        {fieldErrorMessages.description}
+                                    </Form.Control.Feedback>
                                 </Col>
                             </Form.Group>
                             {props.page === 'edit' && (
@@ -278,6 +309,9 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                     </Form.Label>
                                     <Col sm='10'>
                                         <Form.Select
+                                            onChange={handleInputChange(
+                                                'status'
+                                            )}
                                             value={projectDetail.status}
                                         >
                                             {projectStatus.map(
@@ -314,12 +348,23 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                         ></ImageHelper>
                                     </Col>
                                 )}
-                                <Col sm='5'>
-                                    <Form.Control
-                                        type='file'
-                                        onChange={handleInputChange('logo')}
-                                    />
-                                </Col>
+                                {props.page === 'add' && (
+                                    <Col sm={10}>
+                                        <Form.Control
+                                            type='file'
+                                            onChange={handleInputChange('logo')}
+                                            isInvalid={Boolean(
+                                                fieldErrorMessages.logo
+                                            )}
+                                        />
+                                        <Form.Control.Feedback
+                                            className='small-font text-uppercase'
+                                            type='invalid'
+                                        >
+                                            {fieldErrorMessages.logo}
+                                        </Form.Control.Feedback>
+                                    </Col>
+                                )}
                             </Form.Group>
                             <Form.Group as={Row} className='mb-3'>
                                 <Form.Label column sm='2'>
@@ -333,24 +378,32 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                         onChange={handleInputChange(
                                             'startDate'
                                         )}
+                                        isInvalid={Boolean(
+                                            fieldErrorMessages.startDate
+                                        )}
                                     />
-                                    {fieldErrorMessages.startDate && (
-                                        <p className='text-danger my-2 text-capitalize'>
-                                            {fieldErrorMessages.startDate}
-                                        </p>
-                                    )}
+                                    <Form.Control.Feedback
+                                        className='small-font text-uppercase'
+                                        type='invalid'
+                                    >
+                                        {fieldErrorMessages.startDate}
+                                    </Form.Control.Feedback>
                                 </Col>
                                 <Col sm='5'>
                                     <Form.Control
                                         type='date'
                                         value={projectDetail.dueDate}
                                         onChange={handleInputChange('dueDate')}
+                                        isInvalid={Boolean(
+                                            fieldErrorMessages.dueDate
+                                        )}
                                     />
-                                    {fieldErrorMessages.dueDate && (
-                                        <p className='text-danger my-2 text-capitalize'>
-                                            {fieldErrorMessages.dueDate}
-                                        </p>
-                                    )}
+                                    <Form.Control.Feedback
+                                        className='small-font text-uppercase'
+                                        type='invalid'
+                                    >
+                                        {fieldErrorMessages.dueDate}
+                                    </Form.Control.Feedback>
                                 </Col>
                             </Form.Group>
                             <Form.Group as={Row} className='mb-3'>
@@ -363,12 +416,16 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                                         type='number'
                                         onChange={handleInputChange('budget')}
                                         value={projectDetail.budget}
+                                        isInvalid={Boolean(
+                                            fieldErrorMessages.budget
+                                        )}
                                     />
-                                    {fieldErrorMessages.budget && (
-                                        <p className='text-danger my-2 text-capitalize'>
-                                            {fieldErrorMessages.budget}
-                                        </p>
-                                    )}
+                                    <Form.Control.Feedback
+                                        className='small-font text-uppercase'
+                                        type='invalid'
+                                    >
+                                        {fieldErrorMessages.budget}
+                                    </Form.Control.Feedback>
                                 </Col>
                             </Form.Group>
                             {props.page === 'add' ? (

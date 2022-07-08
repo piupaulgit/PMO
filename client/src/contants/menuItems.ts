@@ -22,9 +22,5 @@ export const menuItems: IMenuItems[] =[
         label:'Add User',
         url:'/add-user',
         icon:'PlusCircle'
-    },{
-        label: 'Add New Project',
-        url:'/add-new-project',
-        icon:'Add'
     }
 ]
