@@ -3,7 +3,7 @@ const formidable = require('formidable');
 const projectSchema = require('../schema/projectSchema');
 const { responseMessages } = require('../utilities/responseMessage');
 const fs = require('fs');
-const _ = require("lodash");
+const _ = require('lodash');
 
 exports.createProject = (req, res) => {
     const form = new formidable.IncomingForm();
@@ -21,15 +21,15 @@ exports.createProject = (req, res) => {
             !client ||
             !budget ||
             !startDate ||
-            !dueDate 
+            !dueDate
         ) {
             responseMessages(res, 400, false, 'Please fill all the inputs.');
         }
         let project = new projectSchema(fields);
-        project.status = 'new'
+        project.status = 'new';
         // handle file
         if (file.logo) {
-            project.isLogoUploaded = true
+            project.isLogoUploaded = true;
             if (file.logo.size > 3000000) {
                 responseMessages(res, 400, false, 'File Size is too big');
             }
@@ -76,18 +76,24 @@ exports.getAllProject = (req, res) => {
 
 exports.getSingleProject = (req, res) => {
     req.project.logo = undefined;
-    responseMessages(res, 200, true, "Single project fetched successfully.", req.project);
+    responseMessages(
+        res,
+        200,
+        true,
+        'Single project fetched successfully.',
+        req.project
+    );
 };
 
 exports.logo = (req, res, next) => {
     if (req.project.logo.data) {
-      res.set("content-Type", req.project.logo.contentType);
-      res.send(req.project.logo.data)
-    }else{
-        responseMessages(res, 400, false, 'Image not found')
+        res.set('content-Type', req.project.logo.contentType);
+        res.send(req.project.logo.data);
+    } else {
+        responseMessages(res, 400, false, 'Image not found');
     }
     next();
-  };
+};
 
 exports.updateProject = (req, res) => {
     let form = new formidable.IncomingForm();
