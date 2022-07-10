@@ -169,7 +169,7 @@ const ProjectDetail: React.FC = () => {
                                 <Select
                                 isMulti ={true}
         defaultValue={selectedOption}
-        onChange={(e) => handleChange(e)}
+        onChange={(e: any) => handleChange(e)}
         options={options}
       />
                                 <Card.Body className='p-0'>

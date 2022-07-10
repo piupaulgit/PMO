@@ -16,6 +16,6 @@ router.post('/set-password', setPassword)
 
 router.post('/approve', approve)
 
-router.get('/users', authenticateJWT, getAllUsers)
+router.post('/users', getAllUsers)
 
 module.exports = router
