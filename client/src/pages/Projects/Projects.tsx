@@ -82,18 +82,18 @@ const Projects: React.FC = () => {
         <div className='projects'>
             <Header pageTitle='Projects'></Header>
             <Container className='p-5 page-content-container pos-rel'>
+                <Link
+                    className='btn btn-primary float-end mb-2 position-relative z-index-1 mt-2 me-2'
+                    to='/add-new-project'
+                >
+                    Add New Project
+                </Link>
                 {pageSpinner.state && (
                     <span className='spinner-holder'>
                         <Spinner animation='border' />
                         {pageSpinner.text}
                     </span>
                 )}
-                <Link
-                    className='btn btn-primary float-end mb-2'
-                    to='/add-new-project'
-                >
-                    Add New Project
-                </Link>
                 {allProjects && allProjects?.length > 0 && !pageSpinner.state && (
                     <Table className='pmo-table align-middle'>
                         <thead>
