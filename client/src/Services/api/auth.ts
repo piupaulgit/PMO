@@ -32,9 +32,9 @@ export const userRegistration = (payload: object) => {
         .catch((err) => err.response.data);
 };
 
-export const getAllUsers = () => {
+export const getAllUsers = (payload: object = {}) => {
     return axios
-        .get(`${API_URL}/${url}/users`, {headers: AuthHeader()})
+        .post(`${API_URL}/${url}/users`, payload, {headers: AuthHeader()})
         .then((res) => res.data)
         .catch((err) => err.response.data);
 };
