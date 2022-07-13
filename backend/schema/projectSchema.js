@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { ObjectId } = mongoose.Schema;
 const projectSchema = mongoose.Schema({
     title: {
         type: String,
@@ -38,6 +39,13 @@ const projectSchema = mongoose.Schema({
     logo:{
         data: Buffer,
         contentType: String,
+    },
+    tasks: {
+        type: Array,
+        default: []
+    },
+    taskDetails: {
+        type:Array
     }
 },{ timestamps: true })
 
