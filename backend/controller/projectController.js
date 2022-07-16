@@ -86,7 +86,7 @@ exports.getSingleProject = async (req, res) => {
                 return;
             }
     
-            accept(task);
+            accept(...task);
         });
     })));
 
