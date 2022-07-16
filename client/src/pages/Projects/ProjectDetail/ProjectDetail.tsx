@@ -13,14 +13,17 @@ import { Calendar } from 'react-bootstrap-icons';
 import { Link, useSearchParams } from 'react-router-dom';
 import Header from '../../../components/Header/Header';
 import ImageHelper from '../../../components/ImageHepler/ImageHelper';
-import { IProject, IProjectStatus } from '../../../interfaces/Project';
+import { IProject, IProjectOrTaskStatus } from '../../../interfaces/Project';
 import { ISpinner } from '../../../interfaces/Spinner';
 import { getSingleProjectDetailFromDb } from '../../../Services/api/projectsApi';
 import Utilities from '../../../Services/helpers/utilities';
+import Tasks from '../Tasks/Tasks';
+import { useSelector,useDispatch } from 'react-redux'
+import { RootState } from '../../../redux/store';
+import { updateTasksInStore } from '../../../redux/projectSlice';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { getAllUsers } from '../../../Services/api/auth';
-
 
 const ProjectDetail: React.FC = () => {
     const [projectIdFromUrl, setProjectIdFromUrl] = useSearchParams();
@@ -29,6 +32,26 @@ const ProjectDetail: React.FC = () => {
         state: false,
         text: '',
     });
+    const projectDetailFromStore = useSelector((state: RootState) => state.project)
+    const projectId = projectIdFromUrl.get('id') || '';
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        if(projectDetailFromStore.loadProjectDetail) singleProjectDetail()
+    },[projectDetailFromStore.loadProjectDetail])
+
+    const singleProjectDetail = () => {
+        setPageSpinner({ state: true, text: 'Loading Project Detail...' });
+        getSingleProjectDetailFromDb(projectId)
+            .then((res) => {
+                setProjectDetail(res.data)
+                dispatch(updateTasksInStore(res.data.taskDetails))
+            })
+            .catch((err) => console.log(err))
+            .finally(() => {
+                setPageSpinner({ state: false, text: '' });
+            });
+    };
     const options = [
       { value: 'chocolate', label: 'Chocolate' },
       { value: 'strawberry', label: 'Strawberry' },
@@ -41,16 +64,6 @@ const ProjectDetail: React.FC = () => {
   }
 
     useEffect(() => {
-        const projectId = projectIdFromUrl.get('id') || '';
-        const singleProjectDetail = () => {
-            setPageSpinner({ state: true, text: 'Loading Project Detail...' });
-            getSingleProjectDetailFromDb(projectId)
-                .then((res) => setProjectDetail(res.data))
-                .catch((err) => console.log(err))
-                .finally(() => {
-                    setPageSpinner({ state: false, text: '' });
-                });
-        };
         singleProjectDetail();
         const getDevelopers = () => {
             const payload = {
@@ -106,19 +119,19 @@ const ProjectDetail: React.FC = () => {
                                                 className='text-capitalize'
                                                 bg={
                                                     projectDetail.status ===
-                                                    IProjectStatus.inProgress
+                                                    IProjectOrTaskStatus.inProgress
                                                         ? 'info'
                                                         : projectDetail.status ===
-                                                          IProjectStatus.onHold
+                                                          IProjectOrTaskStatus.onHold
                                                         ? 'secondary'
                                                         : projectDetail.status ===
-                                                          IProjectStatus.closed
+                                                          IProjectOrTaskStatus.closed
                                                         ? 'danger'
                                                         : projectDetail.status ===
-                                                          IProjectStatus.new
+                                                          IProjectOrTaskStatus.new
                                                         ? 'primary'
                                                         : projectDetail.status ===
-                                                          IProjectStatus.done
+                                                          IProjectOrTaskStatus.done
                                                         ? 'success'
                                                         : ''
                                                 }
@@ -217,6 +230,9 @@ const ProjectDetail: React.FC = () => {
                         </Col>
                     </Row>
                 )}
+                {/* Task details here */}
+                {projectDetail.taskDetails && <Tasks projectId={projectDetail._id}></Tasks>}
+                
             </Container>
         </div>
     );
