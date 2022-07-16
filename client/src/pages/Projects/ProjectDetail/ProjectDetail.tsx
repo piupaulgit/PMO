@@ -21,6 +21,9 @@ import Tasks from '../Tasks/Tasks';
 import { useSelector,useDispatch } from 'react-redux'
 import { RootState } from '../../../redux/store';
 import { updateTasksInStore } from '../../../redux/projectSlice';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { getAllUsers } from '../../../Services/api/auth';
 
 const ProjectDetail: React.FC = () => {
     const [projectIdFromUrl, setProjectIdFromUrl] = useSearchParams();
@@ -49,9 +52,31 @@ const ProjectDetail: React.FC = () => {
                 setPageSpinner({ state: false, text: '' });
             });
     };
+    const options = [
+      { value: 'chocolate', label: 'Chocolate' },
+      { value: 'strawberry', label: 'Strawberry' },
+      { value: 'vanilla', label: 'Vanilla' }
+    ] 
+  const [selectedOption, setSelectedOption] = useState([{ value: 'chocolate', label: 'Chocolate' }]);
+
+  const handleChange = (e:any) => {
+    setSelectedOption(e);
+  }
 
     useEffect(() => {
         singleProjectDetail();
+        const getDevelopers = () => {
+            const payload = {
+                filter: {
+                    role: 'developer'
+                }
+            }
+            getAllUsers(payload)
+                .then(data => {
+                    console.log(data)
+                })
+        }
+        getDevelopers();
     }, [projectIdFromUrl]);
 
     return (
@@ -154,6 +179,12 @@ const ProjectDetail: React.FC = () => {
                         <Col sm='5'>
                             <Card className='p-4 border-0 shadow-none'>
                                 <Card.Title>Team Members</Card.Title>
+                                <Select
+                                isMulti ={true}
+        defaultValue={selectedOption}
+        onChange={(e: any) => handleChange(e)}
+        options={options}
+      />
                                 <Card.Body className='p-0'>
                                     <ListGroup>
                                         <ListGroup.Item>

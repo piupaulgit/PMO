@@ -7,6 +7,8 @@ import loginRegisterGraphic from "../../assets/images/login-register-graphic.png
 import logoSMall from "../../assets/images/logo-small.svg";
 import { Link } from "react-router-dom";
 import Utilities from "../../Services/helpers/utilities";
+import {userRegistration} from '../../Services/api/auth';
+import { toast } from 'react-toastify';
 
 interface IRegister {
     name: string,
@@ -34,6 +36,13 @@ const Register: React.FC = () => {
             Utilities.isValidateEmail(register.email) &&
             Utilities.isNotEmpty(register.role, 'Role')
         ) {
+            userRegistration(register).then(res => {
+                if (res.status) {
+                    toast.success(res.message);
+                } else {
+                    toast.error(res.message);
+                }
+            })
             console.log(register)
         }
     }
@@ -99,9 +108,9 @@ const Register: React.FC = () => {
                                         onChange={handleSelectChange}
                                     >
                                         <option value="">Select Role</option>
-                                        <option value="1">Client</option>
-                                        <option value="2">Developer</option>
-                                        <option value="3">Tester</option>
+                                        <option value="client">Client</option>
+                                        <option value="developer">Developer</option>
+                                        <option value="tester">Tester</option>
                                     </Form.Select>
                                 </Form.Group>
 

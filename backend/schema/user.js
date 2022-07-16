@@ -11,11 +11,11 @@ const model = mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        required: false
     },
     role: {
         type: String,
-        required: true
+        required: false
     },
     status: {
         type: String,

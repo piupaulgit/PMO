@@ -5,8 +5,11 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import loginRegisterGraphic from '../../assets/images/login-register-graphic.png';
 import logoSMall from '../../assets/images/logo-small.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Utilities from '../../Services/helpers/utilities';
+import {userLogin} from '../../Services/api/auth';
+import { toast } from 'react-toastify';
+
 
 interface ILogin {
     email: string;
@@ -15,6 +18,8 @@ interface ILogin {
 
 const Login: React.FC = () => {
     const [login, setLogin] = useState<ILogin>(Object);
+
+    const navigate = useNavigate();
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
@@ -28,6 +33,17 @@ const Login: React.FC = () => {
             Utilities.isValidatePassword(login.password)
         ) {
             console.log(login);
+            userLogin(login).then(res => {
+                console.log(res);
+                
+                if (res.status) {
+                    Utilities.setToken(res.data.token)
+                    toast.success('Wellcome to PMO');
+                    navigate('/dashboard')
+                } else {
+                    toast.error(res.message);
+                }
+            })
         }
     };
 
