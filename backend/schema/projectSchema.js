@@ -19,10 +19,6 @@ const projectSchema = mongoose.Schema({
         type: Date,
         required: true
     },
-    client: {
-        type: String,
-        required: true
-    },
     budget: {
         type: Number,
         required: true
@@ -38,7 +34,16 @@ const projectSchema = mongoose.Schema({
     logo:{
         data: Buffer,
         contentType: String,
-    }
+    },
+    developers: [{ 
+        type : mongoose.Schema.ObjectId, 
+        ref: 'User' 
+    }],
+    client: [{
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: 'User' 
+    }],
 },{ timestamps: true })
 
 

@@ -13,18 +13,21 @@ exports.createProject = (req, res) => {
         if (err) {
             responseMessages(res, 400, false, 'Something wrong with the file.');
         }
-        const { title, description, client, budget, startDate, dueDate } =
+        const { title, description, client, budget, startDate, dueDate, developers } =
             fields;
         if (
             !title ||
             !description ||
-            !client ||
             !budget ||
             !startDate ||
             !dueDate
         ) {
             responseMessages(res, 400, false, 'Please fill all the inputs.');
+            return
         }
+        // Form data not coming in proper format, so changing into array of string format
+        fields.developers = String(fields.developers).split(',');
+        fields.client = String(fields.client).split(',');
         let project = new projectSchema(fields);
         project.status = 'new';
         // handle file
@@ -40,6 +43,7 @@ exports.createProject = (req, res) => {
         project.save((err, project) => {
             if (err) {
                 responseMessages(res, 400, false, err);
+                return
             }
             responseMessages(
                 res,
@@ -60,9 +64,12 @@ exports.getAllProject = (req, res) => {
         .select('-logo')
         .sort([[sortBy, 'asc']])
         .limit(limit)
+        .populate('developers', 'name')
+        .populate('client', 'name')
         .exec((err, projects) => {
             if (err) {
                 responseMessages(res, 400, false, 'No Project Found.');
+                return;
             }
             responseMessages(
                 res,
