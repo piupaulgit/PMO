@@ -34,7 +34,7 @@ const Projects: React.FC = () => {
         const getAllProject = () => {
             setPageSpinner({ state: true, text: 'Loading Projects...' });
             getProjectsFromDb()
-                .then((res) =>{debugger; setAllProjects(res.data)})
+                .then((res) =>{setAllProjects(res.data)})
                 .catch((err) => console.log(err))
                 .finally(() =>
                     setPageSpinner({
