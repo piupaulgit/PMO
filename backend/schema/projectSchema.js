@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { ObjectId } = mongoose.Schema;
 const projectSchema = mongoose.Schema({
     title: {
         type: String,
@@ -44,6 +45,13 @@ const projectSchema = mongoose.Schema({
         required: true,
         ref: 'User' 
     }],
+    tasks: {
+        type: Array,
+        default: []
+    },
+    taskDetails: {
+        type:Array
+    }
 },{ timestamps: true })
 
 

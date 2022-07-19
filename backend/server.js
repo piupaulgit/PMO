@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const app = express();
 const userRoutes = require('./routes/user')
 const projectRoutes = require('./routes/projectRoutes')
+const taskRoutes = require('./routes/taskRoutes')
 var cors = require('cors')
 
 const dbUrl = "mongodb://localhost/pmo"
@@ -10,6 +11,7 @@ app.use(express.json())
 app.use(cors())
 app.use('/api/auth', userRoutes)
 app.use('/api/project', projectRoutes)
+app.use('/api/task', taskRoutes)
 
 
 mongoose.connect(dbUrl, {useNewUrlParser: true, useUnifiedTopology: true})

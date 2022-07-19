@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
     Alert,
     Badge,
-    Button,
     Container,
     Nav,
     NavDropdown,
@@ -15,7 +14,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Header from '../../components/Header/Header';
 import ImageHelper from '../../components/ImageHepler/ImageHelper';
-import { IProject, IProjectStatus } from '../../interfaces/Project';
+import { IProject, IProjectOrTaskStatus } from '../../interfaces/Project';
 import { ISpinner } from '../../interfaces/Spinner';
 import {
     deletedProjectFromDb,
@@ -57,13 +56,9 @@ const Projects: React.FC = () => {
             .then((res) => {
                 if (res.status) {
                     toast.success(res.message);
-                    let deletedProjectIndex: number;
                     allProjects.filter((item: IProject, index: number) => {
                         if (item._id === projectId) {
-                            deletedProjectIndex = index;
-                            setAllProjects(
-                                allProjects.splice(deletedProjectIndex, 1)
-                            );
+                            allProjects.splice(index, 1)
                         }
                     });
                 } else {
@@ -153,19 +148,19 @@ const Projects: React.FC = () => {
                                                         className='text-capitalize'
                                                         bg={
                                                             project.status ===
-                                                            IProjectStatus.inProgress
+                                                            IProjectOrTaskStatus.inProgress
                                                                 ? 'info'
                                                                 : project.status ===
-                                                                  IProjectStatus.onHold
+                                                                  IProjectOrTaskStatus.onHold
                                                                 ? 'secondary'
                                                                 : project.status ===
-                                                                  IProjectStatus.closed
+                                                                  IProjectOrTaskStatus.closed
                                                                 ? 'danger'
                                                                 : project.status ===
-                                                                  IProjectStatus.new
+                                                                  IProjectOrTaskStatus.new
                                                                 ? 'primary'
                                                                 : project.status ===
-                                                                  IProjectStatus.done
+                                                                  IProjectOrTaskStatus.done
                                                                 ? 'success'
                                                                 : ''
                                                         }

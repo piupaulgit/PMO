@@ -4,6 +4,7 @@ const projectSchema = require('../schema/projectSchema');
 const { responseMessages } = require('../utilities/responseMessage');
 const fs = require('fs');
 const _ = require('lodash');
+const taskSchema = require('../schema/taskSchema');
 
 exports.createProject = (req, res) => {
     const form = new formidable.IncomingForm();
@@ -81,8 +82,22 @@ exports.getAllProject = (req, res) => {
         });
 };
 
-exports.getSingleProject = (req, res) => {
+exports.getSingleProject = async (req, res) => {
     req.project.logo = undefined;
+    
+    const tasks = await Promise.all(req.project.tasks.map(item => new Promise((accept, reject) => { 
+        taskSchema.find({ _id: item.toString() }).exec((err, task) => {
+        
+            if(err) {
+                reject(err);
+                return;
+            }
+    
+            accept(...task);
+        });
+    })));
+
+    req.project.taskDetails = tasks;
     responseMessages(
         res,
         200,
@@ -90,6 +105,7 @@ exports.getSingleProject = (req, res) => {
         'Single project fetched successfully.',
         req.project
     );
+    
 };
 
 exports.logo = (req, res, next) => {

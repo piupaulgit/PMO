@@ -1,9 +1,20 @@
-export enum IProjectStatus {
+export enum IProjectOrTaskStatus {
     inProgress = 'in progress',
     new = 'new',
     closed = 'closed',
     onHold = 'on hold',
     done = 'done',
+}
+
+export enum IPriority{
+    low = 'low',
+    medium = "medium",
+    high = "high"
+}
+
+export enum ITaskType {
+    task = 'task',
+    bug = "bug"
 }
 export interface IProject {
     _id: string;
@@ -14,8 +25,23 @@ export interface IProject {
     budget: number;
     dueDate: string;
     startDate: string;
-    status?: IProjectStatus;
+    status?: IProjectOrTaskStatus;
     team?: string[];
     isLogoUploaded: boolean;
     developers: Array<string>;
+    taskDetails?: ITask[]
+}
+
+export interface ITask {
+    _id: string;
+    title: string;
+    description: string;
+    project: string;
+    dueDate: string;
+    priority: IPriority;
+    status: string;
+    type: ITaskType;
+    developer: string | 'unassigned';
+    createdBy: string
+    // createdBy: string;
 }
