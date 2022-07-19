@@ -9,7 +9,7 @@ import {
   NavItem,
   Table,
 } from "react-bootstrap";
-import { Pencil, ThreeDots, Trash3 } from "react-bootstrap-icons";
+import { Bug, File, Inbox, Pencil, ThreeDots, Trash3 } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import {
   ITask,
@@ -18,10 +18,13 @@ import {
 } from "../../../interfaces/Project";
 import { ISpinner } from "../../../interfaces/Spinner";
 import { RootState } from "../../../redux/store";
-import { useSelector,useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 import { deleteTaskFromDb } from "../../../Services/api/tasksApi";
 import AddOrEditTask from "./AddOrEditTask";
-import { triggerToGetProjectDetail, updateTasksInStore } from "../../../redux/projectSlice";
+import {
+  triggerToGetProjectDetail,
+  updateTasksInStore,
+} from "../../../redux/projectSlice";
 
 interface IProps {
   projectId: string;
@@ -35,14 +38,15 @@ const Tasks: React.FC<IProps> = (props: IProps) => {
   });
   const [currentTask, setCurrentTask] = useState<ITask>(Object);
   const [modalType, setModalType] = useState<string>("");
-  const projectDetailFromStore = useSelector((state: RootState) => state.project)
+  const projectDetailFromStore = useSelector(
+    (state: RootState) => state.project
+  );
   const [taskDetails, setTaskDetails] = useState<ITask[]>([]);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setTaskDetails(projectDetailFromStore.tasks)
-  },[projectDetailFromStore.tasks])
-  
+    setTaskDetails(projectDetailFromStore.tasks);
+  }, [projectDetailFromStore.tasks]);
 
   const deleteTask = () => {
     setTaskSpinner({ state: true, text: "" });
@@ -50,7 +54,7 @@ const Tasks: React.FC<IProps> = (props: IProps) => {
       .then((res) => {
         if (res.status) {
           toast.success(res.message);
-          dispatch(triggerToGetProjectDetail(true))
+          dispatch(triggerToGetProjectDetail(true));
         } else {
           toast.error(res.message);
         }
@@ -61,15 +65,13 @@ const Tasks: React.FC<IProps> = (props: IProps) => {
       .finally(() => {
         setTaskSpinner({ state: false, text: "" });
         setOpenDeleteModal(false);
-        dispatch(triggerToGetProjectDetail(false))
+        dispatch(triggerToGetProjectDetail(false));
       });
   };
 
   const popupEvent = (val: boolean) => {
     setOpenModal(val);
   };
-
-
 
   return (
     <Container className="mt-5 p-0">
@@ -89,6 +91,7 @@ const Tasks: React.FC<IProps> = (props: IProps) => {
           <thead>
             <tr>
               <td className="text-center">Serial No:</td>
+              <td>Type</td>
               <td>Title</td>
               <td>Status</td>
               <td>Priority</td>
@@ -109,6 +112,13 @@ const Tasks: React.FC<IProps> = (props: IProps) => {
                   }}
                 >
                   <td className="text-center">{index + 1}</td>
+                  <td className="text-capitalize">
+                    {task.type === "bug" ? (
+                      <Bug className="text-danger" />
+                    ) : (
+                      <Inbox className="text-warning" />
+                    )}
+                  </td>
                   <td className="text-capitalize">{task.title}</td>
 
                   <td>

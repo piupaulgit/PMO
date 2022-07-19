@@ -5,7 +5,7 @@ import {
   projectPriority,
   projectStatus,
 } from "../../../contants/projectStatus";
-import { IPriority, ITask } from "../../../interfaces/Project";
+import { IPriority, ITask, ITaskType } from "../../../interfaces/Project";
 import { ISpinner } from "../../../interfaces/Spinner";
 import { useDispatch } from "react-redux";
 import { addNewTaskInDb, editTaskInDb } from "../../../Services/api/tasksApi";
@@ -44,6 +44,7 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
         priority: IPriority.low,
         _id: "",
         project: "",
+        type: ITaskType.task,
         createdBy: "",
         formData: new FormData(),
       };
@@ -122,6 +123,7 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
       _id: "",
       project: "",
       createdBy: "",
+      type: ITaskType.task,
       formData: new FormData(),
     };
     setSinleTaskDetail(taskDetail);
@@ -138,13 +140,33 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-3" as={Row}>
+            <Col md={9}>
             <Form.Label>Task Title</Form.Label>
             <Form.Control
               placeholder="Title"
               value={sinleTaskDetail.title}
               onChange={handleInputChange("title")}
             />
+            </Col>
+            <Col md={3}>
+            <Form.Label>Task Type</Form.Label>
+            <Form.Select
+                  placeholder="Type"
+                  className="text-capitalize"
+                  onChange={handleInputChange("type")}
+                  value={sinleTaskDetail.type}
+                >
+                  {['task','bug'].map((type: string, index: number) => {
+                    return (
+                      <option value={type} key={index}>
+                        {type}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+            </Col>
+            
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Task Description</Form.Label>

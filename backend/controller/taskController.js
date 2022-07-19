@@ -13,7 +13,7 @@ exports.createTask = (req, res) => {
         if (err) {
             responseMessages(res, 400, false, 'Something wrong with the file.');
         }
-        const { title, description, priority = 'low', dueDate, status = 'new', project } =
+        const { title, description, type = 'task', priority = 'low', dueDate, status = 'new', project } =
             fields;
         if (
             !title ||
@@ -21,6 +21,7 @@ exports.createTask = (req, res) => {
             !priority ||
             !dueDate || 
             !status ||
+            !type ||
             !project
         ) {
             responseMessages(res, 400, false, 'Please fill all the inputs.');

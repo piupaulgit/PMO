@@ -11,6 +11,11 @@ export enum IPriority{
     medium = "medium",
     high = "high"
 }
+
+export enum ITaskType {
+    task = 'task',
+    bug = "bug"
+}
 export interface IProject {
     _id: string;
     logo?: string | null;
@@ -34,6 +39,7 @@ export interface ITask {
     dueDate: string;
     priority: IPriority;
     status: string;
+    type: ITaskType;
     developer: string | 'unassigned';
     createdBy: string
     // createdBy: string;
