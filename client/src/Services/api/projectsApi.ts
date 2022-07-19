@@ -29,7 +29,7 @@ export const addNewProjectInDb = (formData: any) => {
 
 export const editProjectInDb = (projectId: string, formData:any) => {
     return axios
-    .put(`${API_URL}/${url}/${projectId}`, { headers: AuthHeader() }, formData)
+    .put(`${API_URL}/${url}/${projectId}`, formData, { headers: AuthHeader() })
     .then((res) => {
         return res.data
     })

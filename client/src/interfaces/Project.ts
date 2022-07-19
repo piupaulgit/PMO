@@ -9,7 +9,7 @@ export interface IProject {
     _id: string;
     logo?: string | null;
     title: string;
-    client: string;
+    client: Array<string>;
     description: string;
     budget: number;
     dueDate: string;
@@ -17,4 +17,5 @@ export interface IProject {
     status?: IProjectStatus;
     team?: string[];
     isLogoUploaded: boolean;
+    developers: Array<string>;
 }

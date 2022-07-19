@@ -162,7 +162,10 @@ exports.deleteProject = (req, res) => {
 
 // funtions
 exports.getProjectById = (req, res, next, id) => {
-    projectSchema.findById(id).exec((err, project) => {
+    projectSchema
+        .findById(id)
+        .populate('developers', 'name')
+        .populate('client', 'name').exec((err, project) => {
         if (err) {
             responseMessages(res, 400, false, 'No Project Found.');
         }
