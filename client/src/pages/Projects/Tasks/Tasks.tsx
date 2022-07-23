@@ -22,14 +22,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { deleteTaskFromDb } from "../../../Services/api/tasksApi";
 import AddOrEditTask from "./AddOrEditTask";
 import {
-  triggerToGetProjectDetail,
-  updateTasksInStore,
+  triggerToGetProjectDetail
 } from "../../../redux/projectSlice";
 
-interface IProps {
-  projectId: string;
-}
-const Tasks: React.FC<IProps> = (props: IProps) => {
+
+const Tasks: React.FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [taskSpinner, setTaskSpinner] = useState<ISpinner>({
@@ -44,16 +41,17 @@ const Tasks: React.FC<IProps> = (props: IProps) => {
   const [taskDetails, setTaskDetails] = useState<ITask[]>([]);
   const dispatch = useDispatch();
 
+
   useEffect(() => {
-    setTaskDetails(projectDetailFromStore.tasks);
-  }, [projectDetailFromStore.tasks]);
+    setTaskDetails(projectDetailFromStore.projectDetail.tasks);
+  }, [projectDetailFromStore.projectDetail]);
 
   const deleteTask = () => {
     setTaskSpinner({ state: true, text: "" });
     deleteTaskFromDb(currentTask._id)
       .then((res) => {
         if (res.status) {
-          toast.success(res.message);
+          toast.success(res.message); 
           dispatch(triggerToGetProjectDetail(true));
         } else {
           toast.error(res.message);
@@ -207,7 +205,6 @@ const Tasks: React.FC<IProps> = (props: IProps) => {
           sinleTaskDetail={currentTask}
           modalType={modalType}
           popupEvent={popupEvent}
-          projectId={props.projectId}
         ></AddOrEditTask>
       )}
       {/* delete confirmation Modal */}

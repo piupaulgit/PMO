@@ -1,34 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { ITask } from '../interfaces/Project';
+import { IProject} from '../interfaces/Project';
 
 export interface projectState {
-    id: string;
+    projectDetail: any;
     loadProjectDetail: boolean;
-    tasks: ITask[]
   }
   
   const initialState: projectState = {
-    id: '',
+    projectDetail: {},
     loadProjectDetail: false,
-    tasks:[]
   }
 
   export const projectSlice = createSlice({
   name: 'project',
   initialState,
   reducers: {
+    updateCurrentProjectDetail: (state,actions:PayloadAction<any>) => {
+      state.projectDetail=actions.payload
+    },
     triggerToGetProjectDetail: (state, actions:PayloadAction<boolean>) => {
       state.loadProjectDetail = actions.payload
-    },
-    updateTasksInStore: (state, actions: PayloadAction<ITask[]>) => {
-      console.log(actions.payload,'state')
-        state.tasks = actions.payload
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { triggerToGetProjectDetail,updateTasksInStore } = projectSlice.actions
+export const { triggerToGetProjectDetail, updateCurrentProjectDetail} = projectSlice.actions
 
 export default projectSlice.reducer
