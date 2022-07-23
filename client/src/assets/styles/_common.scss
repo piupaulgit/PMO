@@ -83,3 +83,14 @@ p,strong{
     font-size: 10px;
     line-height: 10px;
 }
+.avatar{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #11caf0;
+    color: #fff;
+    font-size: 20px;
+}

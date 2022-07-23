@@ -1,3 +1,5 @@
+import { IUser } from "./User";
+
 export enum IProjectOrTaskStatus {
     inProgress = 'in progress',
     new = 'new',
@@ -28,7 +30,7 @@ export interface IProject {
     status?: IProjectOrTaskStatus;
     team?: string[];
     isLogoUploaded: boolean;
-    developers: Array<string>;
+    developers: IUser[];
     taskDetails?: ITask[]
 }
 
