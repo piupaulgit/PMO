@@ -7,30 +7,34 @@ import {
 } from "../../../contants/projectStatus";
 import { IPriority, ITask, ITaskType } from "../../../interfaces/Project";
 import { ISpinner } from "../../../interfaces/Spinner";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addNewTaskInDb, editTaskInDb } from "../../../Services/api/tasksApi";
 import { triggerToGetProjectDetail } from "../../../redux/projectSlice";
+import { RootState } from "../../../redux/store";
 
 interface IProps {
   openModal: boolean;
   sinleTaskDetail: ITask;
   modalType: string;
   popupEvent: any;
-  projectId: string;
 }
 
 interface ITaskDetail extends ITask {
   formData?: any;
 }
 const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
-  const { openModal, modalType, projectId } = props;
+  const { openModal, modalType } = props;
   const [sinleTaskDetail, setSinleTaskDetail] = useState<ITaskDetail>(Object);
   const [addEDitSpinner, setAddEDitSpinner] = useState<ISpinner>({
     state: false,
     text: "",
   });
   const { formData } = sinleTaskDetail;
+  const projectDetailFromStore = useSelector(
+    (state: RootState) => state.project
+  );
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     let taskDetail: ITaskDetail;
@@ -69,8 +73,7 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
 
   const addEditTask = (actionType: string) => {
     setAddEDitSpinner({ state: true, text: "" });
-
-      formData.set("project", projectId);
+      formData.set("project", projectDetailFromStore.projectDetail._id);
     if (actionType === "add") {
       makeFormFieldsEmpty();
 

@@ -21,7 +21,8 @@ exports.createProject = (req, res) => {
             !description ||
             !budget ||
             !startDate ||
-            !dueDate
+            !dueDate ||
+            !client
         ) {
             responseMessages(res, 400, false, 'Please fill all the inputs.');
             return
@@ -84,20 +85,7 @@ exports.getAllProject = (req, res) => {
 
 exports.getSingleProject = async (req, res) => {
     req.project.logo = undefined;
-    
-    const tasks = await Promise.all(req.project.tasks.map(item => new Promise((accept, reject) => { 
-        taskSchema.find({ _id: item.toString() }).exec((err, task) => {
-        
-            if(err) {
-                reject(err);
-                return;
-            }
-    
-            accept(...task);
-        });
-    })));
 
-    req.project.taskDetails = tasks;
     responseMessages(
         res,
         200,
@@ -190,6 +178,7 @@ exports.getProjectById = (req, res, next, id) => {
     projectSchema
         .findById(id)
         .populate('developers', 'name')
+        .populate('tasks')
         .populate('client', 'name').exec((err, project) => {
         if (err) {
             responseMessages(res, 400, false, 'No Project Found.');
