@@ -121,7 +121,8 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
                         ...prev,
                         title: res.data.title,
                         description: res.data.description,
-                        // client: res.data.client,
+                        client: res.data.client.map((item: any) => item._id),
+                        developers: res.data.developers.map((item: any) => item._id) || [],
                         logo: 'logo',
                         startDate: formatDate(res.data.startDate),
                         dueDate: formatDate(res.data.dueDate),
@@ -205,20 +206,10 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
 
         Object.keys(newErrors).map((item: string) => {
             if (
-                (item === 'client' || 
-                item === 'developers') && 
-                projectDetail[item]?.length === 0
-            ) {
-                
-                newErrors[
-                    item as keyof IFieldErrorMessages
-                ] = `Please enter ${item
-                    .replace(/([A-Z])/g, ' $1')
-                    .trim()} of the project`;
-            } 
-            if (!projectDetail[item as keyof IFieldErrorMessages] &&
+                (item === 'client' && projectDetail[item]?.length === 0) ||
+                (!projectDetail[item as keyof IFieldErrorMessages] &&
                 projectDetail[item as keyof IFieldErrorMessages]?.toString()
-                    .length === 0
+                    .length === 0)
             ) {
                 newErrors[
                     item as keyof IFieldErrorMessages
@@ -269,6 +260,12 @@ const AddEditProject: React.FC<IProps> = (props: IProps) => {
         event.preventDefault();
         const formErrors: IFieldErrorMessages = validateForm();
         if (Object.values(formErrors).every((x) => x === null || x === '')) {
+            // format client and developer data and set to form data
+            const getclients = selectedClients.map((item:any) => String(item.value));
+            const getdevelopers = selectedDevelopers.map((item:any) => String(item.value));
+            formData.set('client', getclients);
+            formData.set('developers', getdevelopers.length ? getdevelopers : [null])
+            
             setPageSpinner({ state: true, text: 'Saving your project...' });
             editProjectInDb(projectDetail._id, formData)
                 .then((res) => {

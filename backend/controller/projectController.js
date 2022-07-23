@@ -28,8 +28,8 @@ exports.createProject = (req, res) => {
             return
         }
         // Form data not coming in proper format, so changing into array of string format
-        fields.developers = String(fields.developers).split(',');
-        fields.client = String(fields.client).split(',');
+        fields.developers = String(fields.developers).split(',') || [];
+        fields.client = String(fields.client).split(',') || [];
         let project = new projectSchema(fields);
         project.status = 'new';
         // handle file
@@ -113,6 +113,13 @@ exports.updateProject = (req, res) => {
     form.parse(req, (err, fields, file) => {
         if (err) {
             responseMessages(res, 400, false, 'Something went wrong.');
+            return
+        }
+        // Form data not coming in proper format, so changing into array of string format
+        fields.developers = String(fields.developers).split(',') || [];
+        fields.client = String(fields.client).split(',') || [];
+        if (!fields.developers.length) {
+            delete fields.developers
         }
 
         // update product is happening here
@@ -122,6 +129,7 @@ exports.updateProject = (req, res) => {
         if (file.logo) {
             if (file.logo.size > 3000000) {
                 responseMessages(res, 400, false, 'Updatetion of logo failed.');
+                return
             }
             project.logo.data = fs.readFileSync(file.logo.filepath);
             project.logo.contentType = file.logo.type;
@@ -130,6 +138,7 @@ exports.updateProject = (req, res) => {
         project.save((err, project) => {
             if (err) {
                 responseMessages(res, 400, false, 'Unable to update project.');
+                return
             }
             responseMessages(
                 res,
