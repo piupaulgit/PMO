@@ -13,14 +13,12 @@ const taskSchema = mongoose.Schema({
     },
     type: {
         type: String,
-        required: true
+        required: true,
+        default:'task'
     },
     priority:{
         type:String,
-    },
-    status:{
-        type: String,
-        required: true,
+        default: 'low'
     },
     screenShot:{
         data: Buffer,
@@ -39,7 +37,8 @@ const taskSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        require: true
+        require: true,
+        default: 'new'
     }
 },{ timestamps: true })
 

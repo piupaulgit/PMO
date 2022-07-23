@@ -4,6 +4,7 @@ const formidable = require('formidable');
 const fs = require('fs');
 const projectSchema = require('../schema/projectSchema');
 const _ = require('lodash');
+var ObjectId = require('mongodb').ObjectId;
 
 exports.createTask = (req, res) => {
     const form = new formidable.IncomingForm();
@@ -13,7 +14,7 @@ exports.createTask = (req, res) => {
         if (err) {
             responseMessages(res, 400, false, 'Something wrong with the file.');
         }
-        const { title, description, type = 'task', priority = 'low', dueDate, status = 'new', project } =
+        const { title, description, type, priority, dueDate, status, project } =
             fields;
         if (
             !title ||
@@ -35,14 +36,14 @@ exports.createTask = (req, res) => {
         // if (file.screenShot) {
         //     if (file.screenShot.size > 3000000) {
         //         responseMessages(res, 400, false, 'File Size is too big');
-        //     }
+        //     }s
         //     task.screenShot.data = fs.readFileSync(file.screenShot.filepath);
         //     task.screenShot.contentType = file.screenShot.type;
         // }
 
         // insert the task under the project
         projectSchema.find({"_id": project}).exec((err, project) => {
-            project[0].tasks.push(task._id)
+            project[0].tasks.push(ObjectId(task._id))
             project[0].save((err,project) => {
                 console.log(project[0])
             })

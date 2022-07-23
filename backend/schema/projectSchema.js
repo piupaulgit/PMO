@@ -38,20 +38,19 @@ const projectSchema = mongoose.Schema({
     },
     developers: [{ 
         type : mongoose.Schema.ObjectId, 
-        ref: 'User' 
+        ref: 'User',
+        default: [] 
     }],
     client: [{
         type: mongoose.Schema.ObjectId,
         required: true,
         ref: 'User' 
     }],
-    tasks: {
-        type: Array,
-        default: []
-    },
-    taskDetails: {
-        type:Array
-    }
+    tasks: [{
+        type: mongoose.Schema.ObjectId,
+        default: [],
+        ref:'TaskSchema'
+    }]
 },{ timestamps: true })
 
 
