@@ -38,7 +38,8 @@ const projectSchema = mongoose.Schema({
     },
     developers: [{ 
         type : mongoose.Schema.ObjectId, 
-        ref: 'User' 
+        ref: 'User',
+        required: false
     }],
     client: [{
         type: mongoose.Schema.ObjectId,
