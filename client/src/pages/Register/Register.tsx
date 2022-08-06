@@ -5,7 +5,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import loginRegisterGraphic from "../../assets/images/login-register-graphic.png";
 import logoSMall from "../../assets/images/logo-small.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Utilities from "../../Services/helpers/utilities";
 import {userRegistration} from '../../Services/api/auth';
 import { toast } from 'react-toastify';
@@ -18,6 +18,7 @@ interface IRegister {
 
 const Register: React.FC = () => {
     const [register, setRegister] = useState<IRegister>(Object);
+    const navigate = useNavigate();
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
@@ -39,6 +40,7 @@ const Register: React.FC = () => {
             userRegistration(register).then(res => {
                 if (res.status) {
                     toast.success(res.message);
+                    navigate('/login')
                 } else {
                     toast.error(res.message);
                 }

@@ -88,7 +88,8 @@ exports.signIn = (req, res) => {
 // Set Password (After admin approve user/change password by user)
 exports.setPassword = (req, res) => {
     const query = {
-        'email': req.body.email
+        'email': req.body.email,
+        'status': Constants.APPROVED
     }
     const hash = bcrypt.hashSync(req.body.password, saltRounds);
     const update = {
@@ -99,7 +100,7 @@ exports.setPassword = (req, res) => {
             res.status(500).json(error)
         }
         if (!doc) {
-            responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
+            responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED_OR_APPROVED);
         } else {
             responseMessages(res, 200, true, Constants.RESPONSE.PASSWORD_SET_SUCCESS);
             updateUser(query, { 'status': Constants.REGISTERED })

@@ -38,7 +38,7 @@ const Routers: React.FC = () => {
                     element={<NonPrivateRoute><SetPassword /></NonPrivateRoute>} 
                 />
 
-                <Route path='/' element={<AppWrapper />}>
+                <Route path='/' element={<PrivateRoute><AppWrapper /></PrivateRoute>}>
                     <Route 
                         path="/dashboard" 
                         element={<PrivateRoute><Dashboard /></PrivateRoute>} 

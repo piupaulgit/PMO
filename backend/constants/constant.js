@@ -10,6 +10,7 @@ module.exports = Object.freeze({
         REGISTERED_SUCCESS: 'Registered Successfully, you will receive email once approved',
         REGISTERED_FAIL: 'Already Registered',
         NOT_REGISTERED: 'Email ID not registered',
+        NOT_REGISTERED_OR_APPROVED: 'Email ID not registered or approved',
         ERROR_OCCURRED: 'Error Occurred',
         LOGIN_SUCCESS: 'Login Success',
         PASSWORD_NOT_MATCHED: 'Password not matched',
