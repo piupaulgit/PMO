@@ -2,15 +2,8 @@ import React from 'react';
 import './Sidenav.scss';
 import logo from '../../assets/images/full--logo.png';
 import { Nav } from 'react-bootstrap';
-import {
-    FileEarmarkMedical,
-    HouseDoor,
-    PersonBoundingBox,
-    PlusCircle,
-} from 'react-bootstrap-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { IMenuItems, menuItems } from '../../contants/menuItems';
-import * as Icons from 'react-bootstrap-icons';
 
 const Sidenav: React.FC = () => {
     const location = useLocation();

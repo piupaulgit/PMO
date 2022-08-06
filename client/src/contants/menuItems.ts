@@ -10,11 +10,13 @@ export const menuItems: IMenuItems[] =[
         url: '/dashboard',
         icon: ''
 
-    },{
-        label: 'Clients',
-        url:'/clients',
-        icon:'HouseDoor'
-    },{
+    },
+    // {
+    //     label: 'Clients',
+    //     url:'/clients',
+    //     icon:'HouseDoor'
+    // },
+    {
         label:'Projects',
         url:'/projects',
         icon: 'HouseDoor'
@@ -22,9 +24,10 @@ export const menuItems: IMenuItems[] =[
         label:'Users',
         url:'/users',
         icon:'PlusCircle'
-    },{
-        label:'Add User',
-        url:'/add-user',
-        icon:'PlusCircle'
-    }
+    },
+    // {
+    //     label:'Add User',
+    //     url:'/add-user',
+    //     icon:'PlusCircle'
+    // }
 ]
