@@ -23,12 +23,11 @@ import { RootState } from "../../../redux/store";
 import Select from "react-select";
 import { getAllUsers } from "../../../Services/api/auth";
 import { updateCurrentProjectDetail } from "../../../redux/projectSlice";
-import {IUser} from '../../../interfaces/User';
+import {IUser, IUserDropdown} from '../../../interfaces/User';
 import AvatarImage from '../../../components/AvatarImage/AvatarImage';
 
 const ProjectDetail: React.FC = () => {
   const [projectIdFromUrl, setProjectIdFromUrl] = useSearchParams();
-  const [projectDetail, setProjectDetail] = useState<IProject>(Object);
   const [pageSpinner, setPageSpinner] = useState<ISpinner>({
     state: false,
     text: "",
@@ -47,7 +46,15 @@ const ProjectDetail: React.FC = () => {
     setPageSpinner({ state: true, text: "Loading Project Detail..." });
     getSingleProjectDetailFromDb(projectId)
       .then((res) => {
-        setProjectDetail(res.data);
+        const projectDevs:any = []
+        res.data.developers.forEach((dev:any) => {
+          const devObj = {
+            value : dev._id,
+            label : dev.name,
+          }
+          projectDevs.push(devObj)
+        });
+        res.data.developers = projectDevs;
         dispatch(updateCurrentProjectDetail(res.data));
       })
       .catch((err) => console.log(err))
@@ -102,7 +109,7 @@ const ProjectDetail: React.FC = () => {
           <Row>
             <div>
               <Link
-                to={`/edit-project?id=${projectDetail._id}`}
+                to={`/edit-project?id=${projectDetailFromStore.projectDetail._id}`}
                 className="btn btn-primary mb-2 float-end"
               >
                 Edit Project
@@ -114,42 +121,42 @@ const ProjectDetail: React.FC = () => {
                   <Col sm="2">
                     <ImageHelper
                       projectDetail={{
-                        projectId: projectDetail._id,
-                        isLogoPresent: projectDetail.isLogoUploaded,
+                        projectId: projectDetailFromStore.projectDetail._id,
+                        isLogoPresent: projectDetailFromStore.projectDetail.isLogoUploaded,
                       }}
                     ></ImageHelper>
                   </Col>
                   <Col sm="10">
                     <Card.Title className="d-flex justify-content-between">
-                      {projectDetail.title}
+                      {projectDetailFromStore.projectDetail.title}
                       <Badge
                         pill
                         className="text-capitalize"
                         bg={
-                          projectDetail.status ===
+                          projectDetailFromStore.projectDetail.status ===
                           IProjectOrTaskStatus.inProgress
                             ? "info"
-                            : projectDetail.status ===
+                            : projectDetailFromStore.projectDetail.status ===
                               IProjectOrTaskStatus.onHold
                             ? "secondary"
-                            : projectDetail.status ===
+                            : projectDetailFromStore.projectDetail.status ===
                               IProjectOrTaskStatus.closed
                             ? "danger"
-                            : projectDetail.status === IProjectOrTaskStatus.new
+                            : projectDetailFromStore.projectDetail.status === IProjectOrTaskStatus.new
                             ? "primary"
-                            : projectDetail.status === IProjectOrTaskStatus.done
+                            : projectDetailFromStore.projectDetail.status === IProjectOrTaskStatus.done
                             ? "success"
                             : ""
                         }
                       >
-                        {projectDetail.status}
+                        {projectDetailFromStore.projectDetail.status}
                       </Badge>
                     </Card.Title>
-                    <p>{projectDetail.description}</p>
+                    <p>{projectDetailFromStore.projectDetail.description}</p>
                   </Col>
                   <Col sm={12}>
                     <h5>
-                      <strong>Budget: </strong> {projectDetail.budget}
+                      <strong>Budget: </strong> {projectDetailFromStore.projectDetail.budget}
                     </h5>
                   </Col>
                   <Col sm={12} className="mt-3">
@@ -160,7 +167,7 @@ const ProjectDetail: React.FC = () => {
                           <strong>Start Date</strong>
                         </h6>
                         <p className="mb-0">
-                          {Utilities.getFormatedDate(projectDetail.startDate)}
+                          {Utilities.getFormatedDate(projectDetailFromStore.projectDetail.startDate)}
                         </p>
                       </Col>
                       <Col sm={6}>
@@ -169,7 +176,7 @@ const ProjectDetail: React.FC = () => {
                           <strong>Due Date</strong>
                         </h6>
                         <p className="mb-0">
-                          {Utilities.getFormatedDate(projectDetail.dueDate)}
+                          {Utilities.getFormatedDate(projectDetailFromStore.projectDetail.dueDate)}
                         </p>
                       </Col>
                     </Row>
@@ -188,12 +195,12 @@ const ProjectDetail: React.FC = () => {
                 />
                     <Card.Body className='p-0'>
                         <ListGroup>
-                            {projectDetail.developers && projectDetail.developers.map((developer: IUser) => {
+                            {projectDetailFromStore.projectDetail.developers && projectDetailFromStore.projectDetail.developers.map((developer: IUserDropdown) => {
                                 return (
-                                    <ListGroup.Item className='d-flex align-items-center' key={developer._id}>
-                                        <AvatarImage name={developer.name}></AvatarImage>
+                                    <ListGroup.Item className='d-flex align-items-center' key={developer.id}>
+                                        <AvatarImage name={developer?.label}></AvatarImage>
                                         <h6 className='m-0 d-inline'>
-                                            {developer.name}
+                                            {developer?.label}
                                         </h6>
                                         {/* <Badge bg='info'>
                                         Frontend Dev.

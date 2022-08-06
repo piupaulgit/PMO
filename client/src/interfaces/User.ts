@@ -6,3 +6,8 @@ export interface IUser{
     role: string,
     status: string,
 }
+
+export interface IUserDropdown {
+    label: string,
+    id: string
+}

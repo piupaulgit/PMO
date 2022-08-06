@@ -41,6 +41,7 @@ exports.createTask = (req, res) => {
         //     task.screenShot.contentType = file.screenShot.type;
         // }
 
+        
         // insert the task under the project
         projectSchema.find({"_id": project}).exec((err, project) => {
             project[0].tasks.push(ObjectId(task._id))

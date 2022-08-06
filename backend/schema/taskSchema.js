@@ -28,6 +28,12 @@ const taskSchema = mongoose.Schema({
         type: ObjectId,
         ref: 'Project'
     },
+    developers: [{ 
+        type : ObjectId, 
+        ref: 'User',
+        default: [],
+        required: false
+    }],
     createdBy: {
         type: String,
     },
