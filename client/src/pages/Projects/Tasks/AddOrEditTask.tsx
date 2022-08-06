@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addNewTaskInDb, editTaskInDb } from "../../../Services/api/tasksApi";
 import { triggerToGetProjectDetail } from "../../../redux/projectSlice";
 import { RootState } from "../../../redux/store";
+import Select from 'react-select';
 
 interface IProps {
   openModal: boolean;
@@ -33,8 +34,8 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
   const projectDetailFromStore = useSelector(
     (state: RootState) => state.project
   );
+  const [selectedDevelopers, setSelectedDevelopers] = useState<string[]>([]);
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     let taskDetail: ITaskDetail;
@@ -55,8 +56,8 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
     } else {
       taskDetail = {
         ...props.sinleTaskDetail,
-        formData: new FormData()
-        };
+        formData: new FormData(),
+      };
     }
     setSinleTaskDetail(taskDetail);
   }, [modalType, props.sinleTaskDetail]);
@@ -73,7 +74,7 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
 
   const addEditTask = (actionType: string) => {
     setAddEDitSpinner({ state: true, text: "" });
-      formData.set("project", projectDetailFromStore.projectDetail._id);
+    formData.set("project", projectDetailFromStore.projectDetail._id);
     if (actionType === "add") {
       makeFormFieldsEmpty();
 
@@ -145,31 +146,30 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
         <Form>
           <Form.Group className="mb-3" as={Row}>
             <Col md={9}>
-            <Form.Label>Task Title</Form.Label>
-            <Form.Control
-              placeholder="Title"
-              value={sinleTaskDetail.title}
-              onChange={handleInputChange("title")}
-            />
+              <Form.Label>Task Title</Form.Label>
+              <Form.Control
+                placeholder="Title"
+                value={sinleTaskDetail.title}
+                onChange={handleInputChange("title")}
+              />
             </Col>
             <Col md={3}>
-            <Form.Label>Task Type</Form.Label>
-            <Form.Select
-                  placeholder="Type"
-                  className="text-capitalize"
-                  onChange={handleInputChange("type")}
-                  value={sinleTaskDetail.type}
-                >
-                  {['task','bug'].map((type: string, index: number) => {
-                    return (
-                      <option value={type} key={index}>
-                        {type}
-                      </option>
-                    );
-                  })}
-                </Form.Select>
+              <Form.Label>Task Type</Form.Label>
+              <Form.Select
+                placeholder="Type"
+                className="text-capitalize"
+                onChange={handleInputChange("type")}
+                value={sinleTaskDetail.type}
+              >
+                {["task", "bug"].map((type: string, index: number) => {
+                  return (
+                    <option value={type} key={index}>
+                      {type}
+                    </option>
+                  );
+                })}
+              </Form.Select>
             </Col>
-            
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Task Description</Form.Label>
@@ -225,20 +225,10 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
             <Col>
               <Form.Group className="mb-3">
                 <Form.Label>Developer</Form.Label>
-                <Form.Select
-                  placeholder="Developer"
-                  className="text-capitalize"
-                  onChange={handleInputChange("developer")}
-                  value={sinleTaskDetail.developer}
-                >
-                  {projectStatus.map((status: string, index: number) => {
-                    return (
-                      <option value={status} key={index}>
-                        {status}
-                      </option>
-                    );
-                  })}
-                </Form.Select>
+                <Select
+                  isMulti={true}
+                  options={projectDetailFromStore.projectDetail.developers}
+                />
               </Form.Group>
             </Col>
             <Col>
