@@ -20,7 +20,7 @@ export const setUserPassword = (payload: object) => {
 
 export const userApprove = (payload: object) => {
     return axios
-        .post(`${API_URL}/${url}/approve`, { headers: AuthHeader() }, payload)
+        .post(`${API_URL}/${url}/approve`, payload, { headers: AuthHeader() })
         .then((res) => res.data)
         .catch((err) => err.response.data);
 };

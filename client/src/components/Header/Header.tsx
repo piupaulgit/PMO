@@ -3,6 +3,7 @@ import { Nav, NavDropdown } from 'react-bootstrap';
 import { Bell, Gear, Person, Power } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
 import Utilities from '../../Services/helpers/utilities';
+import AvatarImage from '../AvatarImage/AvatarImage';
 import './Header.scss';
 
 interface HeaderProps {
@@ -15,6 +16,7 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
         Utilities.setToken('');
         navigate('/login');
     }
+    const username = Utilities.getUsername();
     return (
         <header className='header bg-white py-3 px-4 d-flex justify-content-between position-fixed align-items-center'>
             <h6 className='mb-0'>{props.pageTitle}</h6>
@@ -22,12 +24,13 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
                 <NavDropdown
                     title={
                         <div>
-                            <img
+                            {/* <img
                                 className='thumbnail-image'
                                 src='https://via.placeholder.com/50.png/09f/fff'
                                 alt='user pic'
-                            />
-                            Admin
+                            /> */}
+                            {/* <AvatarImage name={username}></AvatarImage> */}
+                            {username}
                             <svg
                                 xmlns='http://www.w3.org/2000/svg'
                                 width='16'

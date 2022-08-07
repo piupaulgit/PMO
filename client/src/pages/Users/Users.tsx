@@ -29,14 +29,16 @@ interface IUser {
 const Users: React.FC = () => {
     const [allUsers, setAllUsers] = useState<IUser[]>([]);
 
-    const statusChangeHandeler = (email: string, approve: boolean) => {
+    const statusChangeHandeler = (email: string, approve: boolean, index: number) => {
         const payload = {
             email,
             approve
         }
         userApprove(payload).then(res => {
-            console.log(res)
             if (res.status) {
+                const copyUsers = [...allUsers];
+                copyUsers[index].status = 'approved';
+                setAllUsers(copyUsers);
                 toast.success(res.message);
             } else {
                 toast.error(res.message);
@@ -84,7 +86,7 @@ const Users: React.FC = () => {
                                                         <Check2
                                                             color='royalblue'
                                                             size={21}
-                                                            onClick={() => statusChangeHandeler(user.email, true)}
+                                                            onClick={() => statusChangeHandeler(user.email, true, index)}
                                                         />
                                                     </span>
                                                     <span
@@ -95,7 +97,7 @@ const Users: React.FC = () => {
                                                         <X
                                                             color='red'
                                                             size={26}
-                                                            onClick={() => statusChangeHandeler(user.email, false)}
+                                                            onClick={() => statusChangeHandeler(user.email, false, index)}
                                                         />
                                                     </span>
                                                 </>

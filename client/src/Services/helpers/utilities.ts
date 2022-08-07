@@ -67,6 +67,23 @@ const Utilities =  {
     },
     getFormatedDate:(date: string) => {
         return new Date(date).toLocaleDateString()
+    },
+    getUsername(){
+        return localStorage.getItem('userName');
+    },
+    setUserName(token: string){
+        const getData = this.parseJwt(token);
+        if (getData?.data?.name) {
+            localStorage.setItem('userName', getData.data.name);
+        } else {
+            console.log('User name error');
+        }
+    },
+    parseJwt(token:string) {
+        if (!token) { return; }
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace('-', '+').replace('_', '/');
+        return JSON.parse(window.atob(base64));
     }
 }
 

@@ -1,18 +1,22 @@
 import React from 'react';
 import { Badge, Card } from 'react-bootstrap';
 import { ChatDots, Clock, Person } from 'react-bootstrap-icons';
+import Utilities from '../../Services/helpers/utilities';
+import AvatarImage from '../AvatarImage/AvatarImage';
 import './PersonCard.scss';
 
 const PersonCard: React.FC = () => {
+    const username = Utilities.getUsername();
     return (
         <>
             <Card className='text-center person-card border-0 shadow-sm mb-4'>
                 <Card.Body className='px-3 py-4'>
-                    <Card.Img
+                    {/* <Card.Img
                         variant='top'
                         src='https://via.placeholder.com/50.png/09f/fff'
                         className='rounded-circle mb-3'
-                    />
+                    /> */}
+                   <AvatarImage name={username}></AvatarImage>
                     <Card.Title>David McHenry</Card.Title>
                     <Card.Subtitle className='text-muted'>
                         UI/UX Designer

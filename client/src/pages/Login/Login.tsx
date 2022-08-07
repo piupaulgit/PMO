@@ -38,6 +38,7 @@ const Login: React.FC = () => {
                 
                 if (res.status) {
                     Utilities.setToken(res.data.token)
+                    Utilities.setUserName(res.data.token)
                     toast.success('Wellcome to PMO');
                     navigate('/dashboard')
                 } else {

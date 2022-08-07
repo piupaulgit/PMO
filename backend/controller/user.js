@@ -145,7 +145,7 @@ exports.approve = async (req, res) => {
 
         transport.sendMail(mailOptions, (error, info) => {
             if (error) {
-                responseMessages(res, 500, false, Constants.RESPONSE.NOT_REGISTERED);
+                responseMessages(res, 500, false, Constants.RESPONSE.EMAIL_NOT_SENT);
             } else {
                 responseMessages(res, 200, true, Constants.RESPONSE.EMAIL_SENT_SUCCESS);
 
