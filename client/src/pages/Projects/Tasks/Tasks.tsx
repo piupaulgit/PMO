@@ -7,9 +7,18 @@ import {
   Nav,
   NavDropdown,
   NavItem,
+  OverlayTrigger,
   Table,
+  Tooltip,
 } from "react-bootstrap";
-import { Bug, File, Inbox, Pencil, ThreeDots, Trash3 } from "react-bootstrap-icons";
+import {
+  Bug,
+  File,
+  Inbox,
+  Pencil,
+  ThreeDots,
+  Trash3,
+} from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import {
   ITask,
@@ -21,10 +30,8 @@ import { RootState } from "../../../redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteTaskFromDb } from "../../../Services/api/tasksApi";
 import AddOrEditTask from "./AddOrEditTask";
-import {
-  triggerToGetProjectDetail
-} from "../../../redux/projectSlice";
-
+import { triggerToGetProjectDetail } from "../../../redux/projectSlice";
+import AvatarImage from "../../../components/AvatarImage/AvatarImage";
 
 const Tasks: React.FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -41,7 +48,6 @@ const Tasks: React.FC = () => {
   const [taskDetails, setTaskDetails] = useState<ITask[]>([]);
   const dispatch = useDispatch();
 
-
   useEffect(() => {
     setTaskDetails(projectDetailFromStore.projectDetail.tasks);
   }, [projectDetailFromStore.projectDetail]);
@@ -51,7 +57,7 @@ const Tasks: React.FC = () => {
     deleteTaskFromDb(currentTask._id)
       .then((res) => {
         if (res.status) {
-          toast.success(res.message); 
+          toast.success(res.message);
           dispatch(triggerToGetProjectDetail(true));
         } else {
           toast.error(res.message);
@@ -93,7 +99,7 @@ const Tasks: React.FC = () => {
               <td>Title</td>
               <td>Status</td>
               <td>Priority</td>
-              <td>Developer</td>
+              <td>Developers</td>
               <td>Created By</td>
               <td className="text-center">Action</td>
             </tr>
@@ -157,7 +163,14 @@ const Tasks: React.FC = () => {
                       {task.priority}
                     </Badge>
                   </td>
-                  <td>{task.developer || "not assigned"}</td>
+                  <td>
+                    {task.developers.length > 0 ?
+                      task.developers.map((dev, index) => (
+                        <span key={index} className="avatar-group">
+                          <AvatarImage name={dev.label} size={'small'}></AvatarImage>
+                        </span>
+                      )) : 'No Developer assigned'}
+                  </td>
                   <td>{task.createdBy || "unknown"}</td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <Nav className="justify-content-center">

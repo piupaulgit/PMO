@@ -83,6 +83,17 @@ p,strong{
     font-size: 10px;
     line-height: 10px;
 }
+.avatar-group{
+    display: flex;
+    justify-content: start;
+    .avatar{
+        margin-right: 0 !important;
+        margin-left: -8px;
+        &:first-child{
+            margin-left: 0;
+        }
+    }
+}
 .avatar{
     width: 50px;
     height: 50px;
@@ -91,6 +102,12 @@ p,strong{
     align-items: center;
     border-radius: 50%;
     background-color: #11caf0;
-    color: #fff;
+    color: $white--color;
     font-size: 20px;
+    border: 1px solid $white--color;
+    &.small{
+        height: 30px;
+        width: 30px;
+        font-size: 12px;
+    }
 }

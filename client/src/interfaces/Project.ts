@@ -34,6 +34,11 @@ export interface IProject {
     taskDetails?: ITask[]
 }
 
+export interface IDeveloper {
+    value: string,
+    label: string
+}
+
 export interface ITask {
     _id: string;
     title: string;
@@ -43,7 +48,7 @@ export interface ITask {
     priority: IPriority;
     status: string;
     type: ITaskType;
-    developer: string | 'unassigned';
+    developers: IDeveloper[];
     createdBy: string
     // createdBy: string;
 }
