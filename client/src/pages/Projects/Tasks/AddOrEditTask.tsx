@@ -37,13 +37,14 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
   const [selectedDevelopers, setSelectedDevelopers] = useState<string[]>([]);
   const dispatch = useDispatch();
 
+
   useEffect(() => {
     let taskDetail: ITaskDetail;
     if (modalType === "add") {
       taskDetail = {
         title: "",
         description: "",
-        developer: "",
+        developers: [],
         dueDate: "",
         status: "",
         priority: IPriority.low,
@@ -60,6 +61,7 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
       };
     }
     setSinleTaskDetail(taskDetail);
+    console.log(taskDetail.developers)
   }, [modalType, props.sinleTaskDetail]);
 
   const popupEvent = () => {
@@ -120,7 +122,7 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
     const taskDetail = {
       title: "",
       description: "",
-      developer: "",
+      developers: [],
       dueDate: "",
       status: "",
       priority: IPriority.low,
@@ -132,6 +134,12 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
     };
     setSinleTaskDetail(taskDetail);
   };
+
+  const handleDeveloperChange = (e:Array<string>, type: string) => {
+    const selectedVal = e.map((item:any) => item.value);
+    formData.set(type, selectedVal);
+    setSinleTaskDetail({...sinleTaskDetail,developers: selectedVal})
+  }
 
   return (
     <Modal show={openModal} centered size="lg">
@@ -228,6 +236,8 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
                 <Select
                   isMulti={true}
                   options={projectDetailFromStore.projectDetail.developers}
+                  defaultValue={sinleTaskDetail.developers}
+                  onChange={(e:any) => handleDeveloperChange(e,'developers')}
                 />
               </Form.Group>
             </Col>
@@ -257,7 +267,7 @@ const AddOrEditTask: React.FC<IProps> = (props: IProps) => {
           {modalType === "add" && addEDitSpinner.state
             ? "Adding Task..."
             : modalType === "add" && !addEDitSpinner.state
-            ? "Adding Task"
+            ? "Add Task"
             : modalType === "edit" && addEDitSpinner.state
             ? "Saving Changes..."
             : modalType === "edit" && !addEDitSpinner.state

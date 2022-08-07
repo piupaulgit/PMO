@@ -177,11 +177,12 @@ exports.deleteProject = (req, res) => {
 exports.getProjectById = (req, res, next, id) => {
   projectSchema
     .findById(id)
+    .populate('developers')
     .populate({
       path: "tasks",
       populate: {
         path: "developers",
-        select:'name -_id'
+        select:'name'
       },
     })
     .populate("client", "name")

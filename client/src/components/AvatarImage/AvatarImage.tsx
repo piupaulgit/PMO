@@ -1,6 +1,6 @@
 import React from "react";
 
-const AvatarImage: React.FC<any> = (props: any) => {
+const AvatarImage: React.FC<any> = (props: {name: string, size?: string}) => {
 
     const getAvatarName = (fullName: string) => {
         let avatarName = '';
@@ -13,7 +13,7 @@ const AvatarImage: React.FC<any> = (props: any) => {
     
 
     return (
-        <span className="avatar me-3">
+        <span className={`avatar me-3 text-uppercase ${props.size}`} title={props.name}>
             {getAvatarName(props.name)}
         </span>
     );

@@ -13,17 +13,16 @@ import { Calendar } from "react-bootstrap-icons";
 import { Link, useSearchParams } from "react-router-dom";
 import Header from "../../../components/Header/Header";
 import ImageHelper from "../../../components/ImageHepler/ImageHelper";
-import { IProject, IProjectOrTaskStatus } from "../../../interfaces/Project";
+import {IProjectOrTaskStatus } from "../../../interfaces/Project";
 import { ISpinner } from "../../../interfaces/Spinner";
 import { getSingleProjectDetailFromDb } from "../../../Services/api/projectsApi";
 import Utilities from "../../../Services/helpers/utilities";
 import Tasks from "../Tasks/Tasks";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../redux/store";
-import Select from "react-select";
 import { getAllUsers } from "../../../Services/api/auth";
 import { updateCurrentProjectDetail } from "../../../redux/projectSlice";
-import {IUser, IUserDropdown} from '../../../interfaces/User';
+import {IUserDropdown} from '../../../interfaces/User';
 import AvatarImage from '../../../components/AvatarImage/AvatarImage';
 
 const ProjectDetail: React.FC = () => {
@@ -55,6 +54,19 @@ const ProjectDetail: React.FC = () => {
           projectDevs.push(devObj)
         });
         res.data.developers = projectDevs;
+
+        res.data.tasks.forEach((task:any) => {
+          const taskDevs:any = []
+          task.developers.forEach((dev:any) => {
+            const devObj = {
+              value : dev._id,
+              label : dev.name,
+            }
+            taskDevs.push(devObj)
+          });
+          task.developers = taskDevs
+        })
+        
         dispatch(updateCurrentProjectDetail(res.data));
       })
       .catch((err) => console.log(err))
@@ -62,18 +74,7 @@ const ProjectDetail: React.FC = () => {
         setPageSpinner({ state: false, text: "" });
       });
   };
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
-  const [selectedOption, setSelectedOption] = useState([
-    { value: "chocolate", label: "Chocolate" },
-  ]);
 
-  const handleChange = (e: any) => {
-    setSelectedOption(e);
-  };
 
   useEffect(() => {
     singleProjectDetail();
@@ -92,7 +93,6 @@ const ProjectDetail: React.FC = () => {
 
   useEffect(() => {
     if (projectDetailFromStore.loadProjectDetail) singleProjectDetail();
-    console.log("ioioio")
   }, [projectDetailFromStore.loadProjectDetail]);
 
   return (
@@ -187,19 +187,13 @@ const ProjectDetail: React.FC = () => {
             <Col sm="5">
               <Card className="p-4 border-0 shadow-none">
                 <Card.Title>Team Members</Card.Title>
-                <Select
-                  isMulti={true}
-                  defaultValue={selectedOption}
-                  onChange={(e: any) => handleChange(e)}
-                  options={options}
-                />
                     <Card.Body className='p-0'>
                         <ListGroup>
                             {projectDetailFromStore.projectDetail.developers && projectDetailFromStore.projectDetail.developers.map((developer: IUserDropdown) => {
                                 return (
                                     <ListGroup.Item className='d-flex align-items-center' key={developer.id}>
                                         <AvatarImage name={developer?.label}></AvatarImage>
-                                        <h6 className='m-0 d-inline'>
+                                        <h6 className='m-0 d-inline text-capitalize'>
                                             {developer?.label}
                                         </h6>
                                         {/* <Badge bg='info'>
